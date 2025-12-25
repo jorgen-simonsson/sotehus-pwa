@@ -1,0 +1,373 @@
+/* CSS Variables */
+:root {
+  --bg-color: #f5f5f5;
+  --card-bg: #ffffff;
+  --text-primary: #1a1a2e;
+  --text-secondary: #666666;
+  --text-muted: #9ca3af;
+  --price-color: #1a1a2e;
+  --power-color: #ea580c;
+  --solar-color: #eab308;
+  --success-color: #22c55e;
+  --error-color: #ef4444;
+  --border-radius: 16px;
+  --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --transition: all 0.3s ease;
+}
+
+/* Reset & Base Styles */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background-color: var(--bg-color);
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* Dashboard Layout */
+.dashboard {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1rem;
+  padding-top: max(2rem, env(safe-area-inset-top));
+  padding-bottom: max(2rem, env(safe-area-inset-bottom));
+}
+
+.dashboard-container {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Header */
+.dashboard-header {
+  text-align: center;
+  padding: 1rem 0 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.app-title {
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.install-btn {
+  background: var(--text-primary);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.install-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* Cards */
+.card {
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  padding: 1.5rem;
+  transition: var(--transition);
+}
+
+.card:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.card-icon {
+  font-size: 1.5rem;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Price Card */
+.price-card .price-display {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.price-card .value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--price-color);
+}
+
+.price-card .unit {
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* Power Card */
+.power-card .power-display {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.power-card .value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--power-color);
+}
+
+.power-card .unit {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* Solar Card */
+.solar-card .solar-display {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.solar-card .value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--solar-color);
+}
+
+.solar-card .unit {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--bg-color);
+  border-top-color: var(--text-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-text {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Status Indicators */
+.status-indicator {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.status-indicator.connected {
+  color: var(--success-color);
+}
+
+.status-indicator.producing {
+  color: var(--solar-color);
+}
+
+.status-indicator.no-production {
+  color: var(--text-muted);
+}
+
+/* Error Message */
+.error-message {
+  font-size: 0.875rem;
+  color: var(--error-color);
+  text-align: center;
+}
+
+.error-message:empty {
+  display: none;
+}
+
+/* Last Updated */
+.last-updated {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.last-updated:empty {
+  display: none;
+}
+
+/* Footer */
+.dashboard-footer {
+  text-align: center;
+  padding-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.offline-status {
+  font-size: 0.875rem;
+  color: var(--error-color);
+}
+
+.offline-status:empty {
+  display: none;
+}
+
+.version {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* Install Banner */
+.install-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--text-primary);
+  color: white;
+  padding: 1rem;
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  transform: translateY(100%);
+  transition: var(--transition);
+  z-index: 1000;
+}
+
+.install-banner.show {
+  transform: translateY(0);
+}
+
+.install-banner .btn {
+  background: white;
+  color: var(--text-primary);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.install-banner .btn-primary {
+  background: var(--success-color);
+  color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .dashboard {
+    padding: 1rem 0.75rem;
+  }
+
+  .app-title {
+    font-size: 2.5rem;
+  }
+
+  .price-card .value {
+    font-size: 2rem;
+  }
+
+  .power-card .value,
+  .solar-card .value {
+    font-size: 1.75rem;
+  }
+
+  .card {
+    padding: 1.25rem;
+  }
+}
+
+/* PWA Specific Styles */
+@media (display-mode: standalone) {
+  .dashboard {
+    padding-top: max(1rem, env(safe-area-inset-top));
+  }
+  
+  .install-btn {
+    display: none !important;
+  }
+}
+
+/* Dark mode support (optional) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-color: #1a1a2e;
+    --card-bg: #252542;
+    --text-primary: #ffffff;
+    --text-secondary: #a0a0b0;
+    --text-muted: #6b7280;
+    --price-color: #ffffff;
+    --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .spinner {
+    border-color: #3a3a5e;
+    border-top-color: #ffffff;
+  }
+}
+
+/* Utility Classes */
+.hidden {
+  display: none !important;
+}

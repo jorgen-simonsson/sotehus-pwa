@@ -1,0 +1,21 @@
+{
+  "name": "sotehus-pwa",
+  "version": "1.0.0",
+  "description": "A Progressive Web Application",
+  "main": "index.js",
+  "scripts": {
+    "start": "npx serve dist",
+    "build": "npm run copy-assets",
+    "copy-assets": "cp -r src/* dist/",
+    "dev": "npx serve src"
+  },
+  "keywords": [
+    "pwa",
+    "progressive-web-app"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "serve": "^14.2.0"
+  }
+}

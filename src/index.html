@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sotehus - Swedish Electricity Spot Price & Power Monitoring Dashboard">
+  <meta name="theme-color" content="#1a1a2e">
+  
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json">
+  
+  <!-- iOS Support -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Sotehus">
+  <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16x16.png">
+  
+  <title>Sotehus</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <main class="dashboard">
+    <div class="dashboard-container">
+      <!-- Header -->
+      <header class="dashboard-header">
+        <h1 class="app-title">Sotehus</h1>
+        <button id="installBtn" class="install-btn" style="display: none;">
+          📲 Install
+        </button>
+      </header>
+
+      <!-- Spot Price Card -->
+      <div class="card price-card">
+        <div class="card-content">
+          <div class="loading-spinner" id="priceSpinner">
+            <div class="spinner"></div>
+          </div>
+          <div class="price-display" id="priceDisplay" style="display: none;">
+            <span class="value" id="priceValue">--</span>
+            <span class="unit">SEK/kWh</span>
+          </div>
+          <div class="error-message" id="priceError"></div>
+          <div class="last-updated" id="priceUpdated"></div>
+        </div>
+      </div>
+
+      <!-- Grid Consumption Card -->
+      <div class="card power-card">
+        <div class="card-header">
+          <span class="card-icon">🏠</span>
+          <span class="card-title">Grid Consumption</span>
+        </div>
+        <div class="card-content">
+          <div class="loading-spinner" id="powerSpinner">
+            <div class="spinner"></div>
+            <span class="loading-text">Connecting...</span>
+          </div>
+          <div class="power-display" id="powerDisplay" style="display: none;">
+            <span class="value" id="powerValue">--</span>
+            <span class="unit">W</span>
+          </div>
+          <div class="status-indicator" id="powerStatus"></div>
+          <div class="error-message" id="powerError"></div>
+          <div class="last-updated" id="powerUpdated"></div>
+        </div>
+      </div>
+
+      <!-- Solar Production Card -->
+      <div class="card solar-card" id="solarCard">
+        <div class="card-header">
+          <span class="card-icon">☀️</span>
+          <span class="card-title">Solar Production</span>
+        </div>
+        <div class="card-content">
+          <div class="loading-spinner" id="solarSpinner">
+            <div class="spinner"></div>
+          </div>
+          <div class="solar-display" id="solarDisplay" style="display: none;">
+            <span class="value" id="solarValue">--</span>
+            <span class="unit" id="solarUnit">W</span>
+          </div>
+          <div class="status-indicator" id="solarStatus"></div>
+          <div class="error-message" id="solarError"></div>
+          <div class="last-updated" id="solarUpdated"></div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <footer class="dashboard-footer">
+        <p class="offline-status" id="offlineStatus"></p>
+        <p class="version" id="versionLabel">v1.0.0</p>
+      </footer>
+    </div>
+  </main>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>
