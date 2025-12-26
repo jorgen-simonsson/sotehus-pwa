@@ -5,7 +5,7 @@
 const CONFIG = {
   API_BASE_URL: 'http://sotehus-pi5:8080/api',
   REFRESH_INTERVAL: 3000, // 3 seconds
-  VERSION: '1.0.0'
+  VERSION: '1.0.1'
 };
 
 // State
