@@ -89,6 +89,25 @@
         </div>
       </div>
 
+      <!-- Frequency Card -->
+      <div class="card frequency-card">
+        <div class="card-header">
+          <span class="card-icon">⚡</span>
+          <span class="card-title">Frequency</span>
+        </div>
+        <div class="card-content">
+          <div class="loading-spinner" id="frequencySpinner">
+            <div class="spinner"></div>
+          </div>
+          <div class="frequency-display" id="frequencyDisplay" style="display: none;">
+            <span class="value" id="frequencyValue">--</span>
+            <span class="unit">Hz</span>
+          </div>
+          <div class="error-message" id="frequencyError"></div>
+          <div class="last-updated" id="frequencyUpdated"></div>
+        </div>
+      </div>
+
       <!-- Footer -->
       <footer class="dashboard-footer">
         <p class="offline-status" id="offlineStatus"></p>

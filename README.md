@@ -4,8 +4,8 @@ Swedish Electricity Spot Price & Power Monitoring Dashboard - A Progressive Web 
 
 ## Features
 
-- ✅ **Real-time Data** - Displays spot price, grid consumption, and solar production
-- ✅ **Auto Refresh** - Updates every 3 seconds from the backend API
+- ✅ **Real-time Data** - Displays spot price, grid consumption, solar production, and grid frequency
+- ✅ **Auto Refresh** - Updates every second from the backend API
 - ✅ **Offline Support** - Service Worker caches assets for offline use
 - ✅ **Installable** - Can be added to home screen on mobile and desktop
 - ✅ **Responsive Design** - Works on all screen sizes
@@ -49,8 +49,8 @@ Edit `src/js/app.js` to configure the backend API URL:
 ```javascript
 const CONFIG = {
   API_BASE_URL: 'http://sotehus-pi5:8080/api',
-  REFRESH_INTERVAL: 3000, // 3 seconds
-  VERSION: '1.0.0'
+  REFRESH_INTERVAL: 1000, // 1 second
+  VERSION: '1.2.1'
 };
 ```
 
@@ -149,6 +149,11 @@ The PWA connects to the sotehus-backend API endpoint `/api/data` which returns:
     "valid": true,
     "power": 2.5,
     "lastUpdate": "2025-12-25T10:00:00+01:00"
+  },
+  "frequency": {
+    "valid": true,
+    "frequency": 50.02,
+    "lastUpdate": "2025-12-25T10:30:00+01:00"
   }
 }
 ```

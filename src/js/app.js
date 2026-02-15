@@ -4,8 +4,8 @@
 // Configuration
 const CONFIG = {
   API_BASE_URL: 'http://sotehus-pi5:8080/api',
-  REFRESH_INTERVAL: 3000, // 3 seconds
-  VERSION: '1.0.1'
+  REFRESH_INTERVAL: 1000, // 1 second
+  VERSION: '1.2.1'
 };
 
 // State
@@ -39,6 +39,13 @@ const elements = {
   solarError: null,
   solarUpdated: null,
   
+  // Frequency card
+  frequencySpinner: null,
+  frequencyDisplay: null,
+  frequencyValue: null,
+  frequencyError: null,
+  frequencyUpdated: null,
+  
   // Other
   offlineStatus: null,
   versionLabel: null,
@@ -68,6 +75,12 @@ function initElements() {
   elements.solarStatus = document.getElementById('solarStatus');
   elements.solarError = document.getElementById('solarError');
   elements.solarUpdated = document.getElementById('solarUpdated');
+  
+  elements.frequencySpinner = document.getElementById('frequencySpinner');
+  elements.frequencyDisplay = document.getElementById('frequencyDisplay');
+  elements.frequencyValue = document.getElementById('frequencyValue');
+  elements.frequencyError = document.getElementById('frequencyError');
+  elements.frequencyUpdated = document.getElementById('frequencyUpdated');
   
   elements.offlineStatus = document.getElementById('offlineStatus');
   elements.versionLabel = document.getElementById('versionLabel');
@@ -122,6 +135,7 @@ function updateUI(data) {
   updatePriceUI(data.price);
   updatePowerUI(data.grid);
   updateSolarUI(data.solar);
+  updateFrequencyUI(data.frequency);
 }
 
 // Update spot price display
@@ -220,12 +234,37 @@ function updateSolarUI(solarData) {
   }
 }
 
+// Update frequency display
+function updateFrequencyUI(frequencyData) {
+  if (!frequencyData) return;
+  
+  // Hide spinner, show display
+  if (elements.frequencySpinner) elements.frequencySpinner.style.display = 'none';
+  if (elements.frequencyDisplay) elements.frequencyDisplay.style.display = 'flex';
+  
+  if (frequencyData.valid) {
+    if (elements.frequencyValue) {
+      elements.frequencyValue.textContent = frequencyData.frequency.toFixed(2);
+    }
+    if (elements.frequencyError) elements.frequencyError.textContent = '';
+    if (elements.frequencyUpdated) {
+      elements.frequencyUpdated.textContent = `Last updated: ${formatTimestamp(frequencyData.lastUpdate)}`;
+    }
+  } else {
+    if (elements.frequencyValue) elements.frequencyValue.textContent = '--';
+    if (elements.frequencyError && frequencyData.message) {
+      elements.frequencyError.textContent = frequencyData.message;
+    }
+  }
+}
+
 // Show error message
 function showError(message) {
   // Show error on all cards
   if (elements.priceError) elements.priceError.textContent = `Error: ${message}`;
   if (elements.powerError) elements.powerError.textContent = `Error: ${message}`;
   if (elements.solarError) elements.solarError.textContent = `Error: ${message}`;
+  if (elements.frequencyError) elements.frequencyError.textContent = `Error: ${message}`;
 }
 
 // Start periodic refresh
@@ -367,7 +406,7 @@ function init() {
   // Initialize DOM elements
   initElements();
   
-  // Set version
+  // Set version in footer
   if (elements.versionLabel) {
     elements.versionLabel.textContent = `v${CONFIG.VERSION}`;
   }
