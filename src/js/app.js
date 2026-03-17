@@ -5,7 +5,7 @@
 const CONFIG = {
   API_BASE_URL: 'http://sotehus-pi5:8080/api',
   REFRESH_INTERVAL: 1000, // 1 second
-  VERSION: '1.2.1'
+  VERSION: '1.3.0'
 };
 
 // State
@@ -49,7 +49,42 @@ const elements = {
   // Other
   offlineStatus: null,
   versionLabel: null,
-  installBtn: null
+  installBtn: null,
+
+  // Views
+  dashboardView: null,
+  costView: null,
+
+  // Menu
+  menuBtn: null,
+  menuOverlay: null,
+  menuDropdown: null,
+
+  // Cost view
+  costTitle: null,
+  costSpinner: null,
+  costError: null,
+  costSummary: null,
+  costTotalValue: null,
+  costKwh: null,
+  costBeforeVat: null,
+  costVat: null,
+  costPeriod: null,
+  costBackBtn: null,
+  showBlocksBtn: null,
+
+  // Blocks view
+  blocksView: null,
+  blocksBackBtn: null,
+  costTableBody: null,
+
+  // Settings view
+  settingsView: null,
+  settingsSpinner: null,
+  settingsError: null,
+  settingsList: null,
+  settingsStatus: null,
+  settingsBackBtn: null
 };
 
 // Initialize DOM elements
@@ -85,6 +120,41 @@ function initElements() {
   elements.offlineStatus = document.getElementById('offlineStatus');
   elements.versionLabel = document.getElementById('versionLabel');
   elements.installBtn = document.getElementById('installBtn');
+
+  // Views
+  elements.dashboardView = document.getElementById('dashboardView');
+  elements.costView = document.getElementById('costView');
+
+  // Menu
+  elements.menuBtn = document.getElementById('menuBtn');
+  elements.menuOverlay = document.getElementById('menuOverlay');
+  elements.menuDropdown = document.getElementById('menuDropdown');
+
+  // Cost view
+  elements.costTitle = document.getElementById('costTitle');
+  elements.costSpinner = document.getElementById('costSpinner');
+  elements.costError = document.getElementById('costError');
+  elements.costSummary = document.getElementById('costSummary');
+  elements.costTotalValue = document.getElementById('costTotalValue');
+  elements.costKwh = document.getElementById('costKwh');
+  elements.costBeforeVat = document.getElementById('costBeforeVat');
+  elements.costVat = document.getElementById('costVat');
+  elements.costPeriod = document.getElementById('costPeriod');
+  elements.costBackBtn = document.getElementById('costBackBtn');
+  elements.showBlocksBtn = document.getElementById('showBlocksBtn');
+
+  // Blocks view
+  elements.blocksView = document.getElementById('blocksView');
+  elements.blocksBackBtn = document.getElementById('blocksBackBtn');
+  elements.costTableBody = document.getElementById('costTableBody');
+
+  // Settings view
+  elements.settingsView = document.getElementById('settingsView');
+  elements.settingsSpinner = document.getElementById('settingsSpinner');
+  elements.settingsError = document.getElementById('settingsError');
+  elements.settingsList = document.getElementById('settingsList');
+  elements.settingsStatus = document.getElementById('settingsStatus');
+  elements.settingsBackBtn = document.getElementById('settingsBackBtn');
 }
 
 // Format timestamp for display
@@ -424,6 +494,9 @@ function init() {
   
   // Setup install prompt
   setupInstallPrompt();
+
+  // Setup menu
+  setupMenu();
   
   // Start data refresh
   startRefresh();
@@ -433,6 +506,308 @@ function init() {
 
 // Make updateApp available globally for inline onclick handler
 window.updateApp = updateApp;
+
+// --- View Navigation ---
+
+function showDashboardView() {
+  elements.dashboardView.classList.remove('hidden');
+  elements.costView.classList.add('hidden');
+  elements.blocksView.classList.add('hidden');
+  elements.settingsView.classList.add('hidden');
+  startRefresh();
+}
+
+function showCostView(period) {
+  stopRefresh();
+  closeMenu();
+  elements.dashboardView.classList.add('hidden');
+  elements.settingsView.classList.add('hidden');
+  elements.blocksView.classList.add('hidden');
+  elements.costView.classList.remove('hidden');
+
+  // Reset cost view state
+  elements.costSpinner.style.display = 'flex';
+  elements.costError.textContent = '';
+  elements.costSummary.classList.add('hidden');
+  elements.showBlocksBtn.classList.add('hidden');
+
+  const labels = {
+    lastHour: 'Cost last hour',
+    last24h: 'Cost last 24 hours',
+    lastMonth: 'Cost last calendar month'
+  };
+  elements.costTitle.textContent = labels[period] || 'Cost';
+
+  const { start, stop } = calculateTimePeriod(period);
+  fetchCostData(start, stop);
+}
+
+// --- Menu ---
+
+function toggleMenu() {
+  const isOpen = !elements.menuDropdown.classList.contains('hidden');
+  if (isOpen) {
+    closeMenu();
+  } else {
+    elements.menuDropdown.classList.remove('hidden');
+    elements.menuOverlay.classList.remove('hidden');
+  }
+}
+
+function closeMenu() {
+  elements.menuDropdown.classList.add('hidden');
+  elements.menuOverlay.classList.add('hidden');
+}
+
+function setupMenu() {
+  elements.menuBtn.addEventListener('click', toggleMenu);
+  elements.menuOverlay.addEventListener('click', closeMenu);
+
+  document.querySelectorAll('.menu-item').forEach(item => {
+    item.addEventListener('click', () => {
+      showCostView(item.dataset.period);
+    });
+  });
+
+  elements.costBackBtn.addEventListener('click', showDashboardView);
+
+  elements.showBlocksBtn.addEventListener('click', () => {
+    elements.costView.classList.add('hidden');
+    elements.blocksView.classList.remove('hidden');
+  });
+
+  elements.blocksBackBtn.addEventListener('click', () => {
+    elements.blocksView.classList.add('hidden');
+    elements.costView.classList.remove('hidden');
+  });
+
+  document.getElementById('menuSettings').addEventListener('click', () => {
+    showSettingsView();
+  });
+
+  elements.settingsBackBtn.addEventListener('click', showDashboardView);
+}
+
+// --- Cost Data ---
+
+function formatLocalISO(date) {
+  const offset = -date.getTimezoneOffset();
+  const sign = offset >= 0 ? '+' : '-';
+  const pad = n => String(Math.abs(n)).padStart(2, '0');
+  const hours = Math.floor(Math.abs(offset) / 60);
+  const mins = Math.abs(offset) % 60;
+  return date.getFullYear()
+    + '-' + pad(date.getMonth() + 1)
+    + '-' + pad(date.getDate())
+    + 'T' + pad(date.getHours())
+    + ':' + pad(date.getMinutes())
+    + ':' + pad(date.getSeconds())
+    + sign + pad(hours) + ':' + pad(mins);
+}
+
+function calculateTimePeriod(period) {
+  const now = new Date();
+  let start, stop;
+
+  if (period === 'lastHour') {
+    stop = new Date(now);
+    start = new Date(now.getTime() - 60 * 60 * 1000);
+  } else if (period === 'last24h') {
+    stop = new Date(now);
+    start = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+  } else if (period === 'lastMonth') {
+    const firstOfThisMonth = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0);
+    const firstOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1, 0, 0, 0);
+    start = firstOfLastMonth;
+    stop = firstOfThisMonth;
+  }
+
+  return {
+    start: formatLocalISO(start),
+    stop: formatLocalISO(stop)
+  };
+}
+
+async function fetchCostData(start, stop) {
+  try {
+    const url = `${CONFIG.API_BASE_URL}/energy/cost?start=${encodeURIComponent(start)}&stop=${encodeURIComponent(stop)}`;
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(text || `HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+    renderCostView(data);
+  } catch (error) {
+    console.error('Failed to fetch cost data:', error);
+    elements.costSpinner.style.display = 'none';
+    elements.costError.textContent = `Error: ${error.message}`;
+  }
+}
+
+function formatShortTime(isoString) {
+  const d = new Date(isoString);
+  return d.toLocaleString('sv-SE', {
+    month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit'
+  });
+}
+
+function renderCostView(data) {
+  elements.costSpinner.style.display = 'none';
+  elements.costSummary.classList.remove('hidden');
+  elements.showBlocksBtn.classList.remove('hidden');
+
+  elements.costTotalValue.textContent = data.total_cost.toFixed(2);
+  elements.costKwh.textContent = data.total_consumed_kwh.toFixed(2) + ' kWh';
+  elements.costBeforeVat.textContent = data.cost_before_vat.toFixed(2) + ' kr';
+  elements.costVat.textContent = data.vat_percent + '%';
+  elements.costPeriod.textContent =
+    formatShortTime(data.period_start) + ' \u2013 ' + formatShortTime(data.period_stop);
+
+  // Render blocks table
+  const tbody = elements.costTableBody;
+  tbody.innerHTML = '';
+  if (data.blocks && data.blocks.length > 0) {
+    data.blocks.forEach(block => {
+      const tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td>' + formatShortTime(block.start) + '\u2013' + formatShortTime(block.stop) + '</td>'
+        + '<td>' + block.spot_price.toFixed(2) + '</td>'
+        + '<td>' + block.consumed_kwh.toFixed(2) + '</td>'
+        + '<td>' + block.cost.toFixed(2) + '</td>';
+      tbody.appendChild(tr);
+    });
+  } else {
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td colspan="4" style="text-align:center">No data for this period</td>';
+    tbody.appendChild(tr);
+  }
+}
+
+// --- Settings ---
+
+function showSettingsView() {
+  stopRefresh();
+  closeMenu();
+  elements.dashboardView.classList.add('hidden');
+  elements.costView.classList.add('hidden');
+  elements.blocksView.classList.add('hidden');
+  elements.settingsView.classList.remove('hidden');
+
+  elements.settingsSpinner.style.display = 'flex';
+  elements.settingsError.textContent = '';
+  elements.settingsList.classList.add('hidden');
+  elements.settingsStatus.textContent = '';
+
+  fetchParams();
+}
+
+async function fetchParams() {
+  try {
+    const response = await fetch(`${CONFIG.API_BASE_URL}/params`);
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    const params = await response.json();
+    renderSettings(params);
+  } catch (error) {
+    console.error('Failed to fetch params:', error);
+    elements.settingsSpinner.style.display = 'none';
+    elements.settingsError.textContent = `Error: ${error.message}`;
+  }
+}
+
+function renderSettings(params) {
+  elements.settingsSpinner.style.display = 'none';
+  elements.settingsList.classList.remove('hidden');
+  elements.settingsList.innerHTML = '';
+
+  params.forEach(param => {
+    const card = document.createElement('div');
+    card.className = 'settings-card';
+
+    const label = document.createElement('label');
+    label.className = 'settings-label';
+    label.textContent = param.description || param.key;
+    label.setAttribute('for', 'param-' + param.key);
+
+    // Extract display value from JSON content like {"value": 25}
+    let displayValue = param.content;
+    let isJsonWrapped = false;
+    try {
+      const parsed = JSON.parse(param.content);
+      if (parsed && typeof parsed === 'object' && 'value' in parsed) {
+        displayValue = String(parsed.value);
+        isJsonWrapped = true;
+      }
+    } catch (e) { /* not JSON, use raw */ }
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'settings-input';
+    input.id = 'param-' + param.key;
+    input.value = displayValue;
+    input.dataset.key = param.key;
+    input.dataset.original = displayValue;
+    input.dataset.description = param.description || '';
+    input.dataset.jsonWrapped = isJsonWrapped ? '1' : '';
+
+    const saveBtn = document.createElement('button');
+    saveBtn.className = 'settings-save-btn';
+    saveBtn.textContent = 'Save';
+    saveBtn.disabled = true;
+
+    input.addEventListener('input', () => {
+      saveBtn.disabled = input.value === input.dataset.original;
+    });
+
+    saveBtn.addEventListener('click', () => {
+      let contentToSave = input.value;
+      if (input.dataset.jsonWrapped) {
+        const num = Number(contentToSave);
+        const val = isNaN(num) ? contentToSave : num;
+        contentToSave = JSON.stringify({ value: val });
+      }
+      saveParam(param.key, input.dataset.description, contentToSave, input, saveBtn);
+    });
+
+    card.appendChild(label);
+    card.appendChild(input);
+    card.appendChild(saveBtn);
+    elements.settingsList.appendChild(card);
+  });
+}
+
+async function saveParam(key, description, content, input, btn) {
+  btn.disabled = true;
+  elements.settingsStatus.textContent = 'Saving...';
+  elements.settingsStatus.className = 'settings-status';
+
+  try {
+    const response = await fetch(`${CONFIG.API_BASE_URL}/params/${encodeURIComponent(key)}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ description, content })
+    });
+
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(text || `HTTP ${response.status}`);
+    }
+
+    input.dataset.original = input.value;
+    elements.settingsStatus.textContent = 'Saved';
+    elements.settingsStatus.className = 'settings-status settings-status-ok';
+  } catch (error) {
+    console.error('Failed to save param:', error);
+    elements.settingsStatus.textContent = `Error: ${error.message}`;
+    elements.settingsStatus.className = 'settings-status settings-status-error';
+    btn.disabled = false;
+  }
+}
 
 // Start the app when DOM is ready
 if (document.readyState === 'loading') {

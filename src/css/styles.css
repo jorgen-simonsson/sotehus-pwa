@@ -391,3 +391,362 @@ body {
 .hidden {
   display: none !important;
 }
+
+/* Menu Button */
+.menu-btn {
+  position: absolute;
+  left: 0;
+  background: none;
+  border: none;
+  font-size: 1.75rem;
+  cursor: pointer;
+  color: var(--text-primary);
+  padding: 0.25rem 0.5rem;
+  border-radius: 8px;
+  transition: var(--transition);
+  line-height: 1;
+}
+
+.menu-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* Header needs relative positioning for menu button */
+.dashboard-header {
+  position: relative;
+  justify-content: center;
+}
+
+/* Menu Overlay */
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 99;
+}
+
+/* Menu Dropdown */
+.menu-dropdown {
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+  z-index: 100;
+  position: relative;
+}
+
+.menu-item {
+  display: block;
+  width: 100%;
+  padding: 1rem 1.25rem;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--bg-color);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: pointer;
+  text-align: left;
+  transition: var(--transition);
+  font-family: inherit;
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+.menu-item:hover {
+  background: var(--bg-color);
+}
+
+/* Cost View */
+.cost-header {
+  text-align: center;
+  padding: 0.5rem 0 1rem;
+}
+
+.cost-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.cost-error {
+  color: var(--error-color);
+  text-align: center;
+  font-size: 0.875rem;
+  padding: 1rem;
+}
+
+.cost-error:empty {
+  display: none;
+}
+
+/* Cost Summary */
+.cost-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.cost-total-card {
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.cost-total-label {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.cost-total-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--price-color);
+}
+
+.cost-total-unit {
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.cost-details {
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  padding: 1rem 1.25rem;
+}
+
+.cost-detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--bg-color);
+}
+
+.cost-detail-row:last-child {
+  border-bottom: none;
+}
+
+.cost-detail-row span:first-child {
+  color: var(--text-secondary);
+}
+
+.cost-detail-row span:last-child {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Cost Table */
+.cost-table-wrapper {
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-top: 0.6rem;
+}
+
+.cost-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.cost-table th {
+  background: var(--bg-color);
+  padding: 0.625rem 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+}
+
+.cost-table td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--bg-color);
+  white-space: nowrap;
+}
+
+.cost-table tbody tr:nth-child(even) {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.cost-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Back Button */
+.back-btn {
+  display: block;
+  width: 100%;
+  padding: 0.875rem;
+  margin-top: 1rem;
+  background: var(--text-primary);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: inherit;
+}
+
+.back-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* Show Blocks Button */
+.blocks-btn {
+  display: block;
+  width: 100%;
+  padding: 0.875rem;
+  margin-top: 1rem;
+  background: var(--card-bg);
+  color: var(--text-primary);
+  border: 2px solid var(--text-primary);
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: inherit;
+}
+
+.blocks-btn:hover {
+  background: var(--text-primary);
+  color: white;
+}
+
+/* Settings */
+.settings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.settings-card {
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.settings-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.settings-input {
+  width: 100%;
+  padding: 0.625rem 0.75rem;
+  border: 2px solid var(--bg-color);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: var(--text-primary);
+  background: var(--bg-color);
+  transition: var(--transition);
+  box-sizing: border-box;
+}
+
+.settings-input:focus {
+  outline: none;
+  border-color: var(--text-primary);
+  background: var(--card-bg);
+}
+
+.settings-save-btn {
+  align-self: flex-end;
+  padding: 0.5rem 1.25rem;
+  background: var(--success-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: inherit;
+}
+
+.settings-save-btn:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.settings-save-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.settings-status {
+  text-align: center;
+  font-size: 0.875rem;
+  padding: 0.5rem;
+  min-height: 1.5rem;
+}
+
+.settings-status:empty {
+  display: none;
+}
+
+.settings-status-ok {
+  color: var(--success-color);
+}
+
+.settings-status-error {
+  color: var(--error-color);
+}
+
+/* Dark mode additions */
+@media (prefers-color-scheme: dark) {
+  .menu-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .menu-overlay {
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .menu-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .cost-table tbody tr:nth-child(even) {
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  .back-btn {
+    background: #ffffff;
+    color: var(--bg-color);
+  }
+
+  .settings-input {
+    border-color: #3a3a5e;
+    background: #3a3a5e;
+    color: #ffffff;
+  }
+
+  .settings-input:focus {
+    border-color: #ffffff;
+    background: var(--card-bg);
+  }
+}
