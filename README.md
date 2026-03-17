@@ -10,6 +10,10 @@ Swedish Electricity Spot Price & Power Monitoring Dashboard - A Progressive Web 
 - ✅ **Installable** - Can be added to home screen on mobile and desktop
 - ✅ **Responsive Design** - Works on all screen sizes
 - ✅ **Dark Mode** - Automatic dark mode based on system preference
+- ✅ **Cost Reports** - View energy costs for last hour, last 24 hours, or last calendar month
+- ✅ **Price Period Blocks** - Detailed breakdown of cost per price period with spot price, consumption, and cost
+- ✅ **Settings** - Edit backend parameters (VAT, energy tax, transfer price, etc.) directly from the app
+- ✅ **Navigation Menu** - Hamburger menu for accessing cost reports and settings
 
 ## Getting Started
 
@@ -50,7 +54,7 @@ Edit `src/js/app.js` to configure the backend API URL:
 const CONFIG = {
   API_BASE_URL: 'http://sotehus-pi5:8080/api',
   REFRESH_INTERVAL: 1000, // 1 second
-  VERSION: '1.2.1'
+  VERSION: '1.3.0'
 };
 ```
 
@@ -67,6 +71,9 @@ sotehus-pwa/
 │   ├── js/
 │   │   └── app.js        # Main JavaScript
 │   └── icons/            # PWA icons
+├── doc/
+│   ├── openapi.json      # Backend OpenAPI spec
+│   └── cost_plan.md      # Implementation plan
 ├── Dockerfile            # Docker image definition
 ├── docker-compose.yml    # Docker Compose configuration
 ├── nginx.conf            # Nginx configuration
@@ -131,7 +138,18 @@ Edit `src/manifest.json` to customize:
 
 ## API
 
-The PWA connects to the sotehus-backend API endpoint `/api/data` which returns:
+The PWA connects to the sotehus-backend API at `http://sotehus-pi5:8080/api`. Full API documentation is available at `/swagger/doc.json` and saved in `doc/openapi.json`.
+
+### Endpoints Used
+
+| Endpoint | Method | Description |
+|---|---|---|
+| `/api/data` | GET | Real-time dashboard data (price, grid, solar, frequency) |
+| `/api/energy/cost?start=...&stop=...` | GET | Energy cost for a time period with price period blocks |
+| `/api/params` | GET | List all configurable parameters |
+| `/api/params/{key}` | PUT | Update a parameter value |
+
+### `/api/data` Response
 
 ```json
 {
@@ -156,6 +174,40 @@ The PWA connects to the sotehus-backend API endpoint `/api/data` which returns:
     "lastUpdate": "2025-12-25T10:30:00+01:00"
   }
 }
+```
+
+### `/api/energy/cost` Response
+
+```json
+{
+  "cost": 12.34,
+  "costBeforeVat": 9.87,
+  "vat": 2.47,
+  "kwh": 5.67,
+  "blocks": [
+    {
+      "start": "2026-03-17T10:00:00+01:00",
+      "stop": "2026-03-17T11:00:00+01:00",
+      "spotPrice": 0.45,
+      "kwh": 1.2,
+      "cost": 2.10
+    }
+  ]
+}
+```
+
+### `/api/params` Response
+
+```json
+[
+  {
+    "id": "...",
+    "key": "VAT",
+    "description": "VAT percent",
+    "content": "{\"value\": 25}",
+    "changed": "2026-03-17T17:02:17+01:00"
+  }
+]
 ```
 
 ## License

@@ -25,13 +25,27 @@
 <body>
   <main class="dashboard">
     <div class="dashboard-container">
+
+      <!-- Dashboard View -->
+      <div id="dashboardView">
+
       <!-- Header -->
       <header class="dashboard-header">
+        <button id="menuBtn" class="menu-btn" aria-label="Menu">☰</button>
         <h1 class="app-title">Sotehus</h1>
         <button id="installBtn" class="install-btn" style="display: none;">
           📲 Install
         </button>
       </header>
+
+      <!-- Menu Dropdown -->
+      <div id="menuOverlay" class="menu-overlay hidden"></div>
+      <nav id="menuDropdown" class="menu-dropdown hidden">
+        <button class="menu-item" data-period="lastHour">💰 Cost last hour</button>
+        <button class="menu-item" data-period="last24h">💰 Cost last 24 hours</button>
+        <button class="menu-item" data-period="lastMonth">💰 Cost last calendar month</button>
+        <button class="menu-item" id="menuSettings">⚙️ Settings</button>
+      </nav>
 
       <!-- Spot Price Card -->
       <div class="card price-card">
@@ -113,6 +127,94 @@
         <p class="offline-status" id="offlineStatus"></p>
         <p class="version" id="versionLabel">v1.0.0</p>
       </footer>
+
+      </div><!-- /dashboardView -->
+
+      <!-- Cost View -->
+      <div id="costView" class="hidden">
+        <header class="cost-header">
+          <h2 id="costTitle">Cost</h2>
+        </header>
+
+        <!-- Cost Loading -->
+        <div id="costSpinner" class="loading-spinner">
+          <div class="spinner"></div>
+          <span class="loading-text">Loading cost data...</span>
+        </div>
+
+        <!-- Cost Error -->
+        <div id="costError" class="cost-error"></div>
+
+        <!-- Cost Summary -->
+        <div id="costSummary" class="cost-summary hidden">
+          <div class="cost-total-card">
+            <span class="cost-total-label">Total cost</span>
+            <span class="cost-total-value" id="costTotalValue">--</span>
+            <span class="cost-total-unit">kr</span>
+          </div>
+          <div class="cost-details">
+            <div class="cost-detail-row">
+              <span>Energy consumed</span>
+              <span id="costKwh">--</span>
+            </div>
+            <div class="cost-detail-row">
+              <span>Cost before VAT</span>
+              <span id="costBeforeVat">--</span>
+            </div>
+            <div class="cost-detail-row">
+              <span>VAT</span>
+              <span id="costVat">--</span>
+            </div>
+            <div class="cost-detail-row">
+              <span>Period</span>
+              <span id="costPeriod">--</span>
+            </div>
+          </div>
+        </div>
+
+        <button id="showBlocksBtn" class="blocks-btn hidden">Included price periods</button>
+
+        <button id="costBackBtn" class="back-btn">← Back</button>
+      </div><!-- /costView -->
+
+      <!-- Blocks View -->
+      <div id="blocksView" class="hidden">
+        <button id="blocksBackBtn" class="back-btn">← Back</button>
+        <div class="cost-table-wrapper">
+          <table class="cost-table">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Spot</th>
+                <th>kWh</th>
+                <th>Cost</th>
+              </tr>
+            </thead>
+            <tbody id="costTableBody"></tbody>
+          </table>
+        </div>
+      </div><!-- /blocksView -->
+
+      <!-- Settings View -->
+      <div id="settingsView" class="hidden">
+        <header class="cost-header">
+          <h2>Settings</h2>
+        </header>
+
+        <div id="settingsSpinner" class="loading-spinner">
+          <div class="spinner"></div>
+          <span class="loading-text">Loading settings...</span>
+        </div>
+
+        <div id="settingsError" class="cost-error"></div>
+
+        <div id="settingsList" class="settings-list hidden"></div>
+
+        <div id="settingsStatus" class="settings-status"></div>
+
+        <button id="settingsBackBtn" class="back-btn">← Back</button>
+      </div><!-- /settingsView -->
+
     </div>
   </main>
 
