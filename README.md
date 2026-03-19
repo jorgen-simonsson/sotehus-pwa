@@ -12,8 +12,11 @@ Swedish Electricity Spot Price & Power Monitoring Dashboard - A Progressive Web 
 - ✅ **Dark Mode** - Automatic dark mode based on system preference
 - ✅ **Cost Reports** - View energy costs for last hour, last 24 hours, or last calendar month
 - ✅ **Price Period Blocks** - Detailed breakdown of cost per price period with spot price, consumption, and cost
+- ✅ **Solar Production Benefit** - Cost view shows energy sold to grid and cost reduction from solar production
 - ✅ **Settings** - Edit backend parameters (VAT, energy tax, transfer price, etc.) directly from the app
 - ✅ **Navigation Menu** - Hamburger menu for accessing cost reports and settings
+- ✅ **Dynamic Title** - Header title fetched from backend `location_name` parameter
+- ✅ **Version Display** - Footer shows both frontend and backend versions
 
 ## Getting Started
 
@@ -54,7 +57,7 @@ Edit `src/js/app.js` to configure the backend API URL:
 const CONFIG = {
   API_BASE_URL: 'http://sotehus-pi5:8080/api',
   REFRESH_INTERVAL: 1000, // 1 second
-  VERSION: '1.3.0'
+  VERSION: '1.4.0'
 };
 ```
 
@@ -98,6 +101,20 @@ For your PWA to work properly, you need to add icon files to `src/icons/`. Requi
 You can generate these from a single 512x512 PNG using:
 - [RealFaviconGenerator](https://realfavicongenerator.net/)
 - [PWA Builder Image Generator](https://www.pwabuilder.com/imageGenerator)
+
+## Release Log
+
+### v1.4.0
+- Display both frontend and backend versions in the footer (e.g. `FE v1.4.0 | BE v1.6.0`)
+- Header title dynamically fetched from backend `location_name` parameter
+- Cost view: replaced "Cost before VAT" and "VAT" rows with "Energy sold to grid" and "Cost reduction" using values from the backend API
+- Settings: input field and save button now displayed on the same line for a more compact layout
+
+### v1.3.0
+- Cost reports for last hour, last 24 hours, and last calendar month
+- Price period blocks with detailed cost breakdown
+- Settings view for editing backend parameters
+- Navigation menu
 
 ## Testing PWA Features
 

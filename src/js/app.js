@@ -5,7 +5,7 @@
 const CONFIG = {
   API_BASE_URL: 'http://sotehus-pi5:8080/api',
   REFRESH_INTERVAL: 1000, // 1 second
-  VERSION: '1.3.0'
+  VERSION: '1.4.0'
 };
 
 // State
@@ -47,6 +47,7 @@ const elements = {
   frequencyUpdated: null,
   
   // Other
+  appTitle: null,
   offlineStatus: null,
   versionLabel: null,
   installBtn: null,
@@ -67,8 +68,8 @@ const elements = {
   costSummary: null,
   costTotalValue: null,
   costKwh: null,
-  costBeforeVat: null,
-  costVat: null,
+  costSoldEnergy: null,
+  costReduction: null,
   costPeriod: null,
   costBackBtn: null,
   showBlocksBtn: null,
@@ -117,6 +118,7 @@ function initElements() {
   elements.frequencyError = document.getElementById('frequencyError');
   elements.frequencyUpdated = document.getElementById('frequencyUpdated');
   
+  elements.appTitle = document.getElementById('appTitle');
   elements.offlineStatus = document.getElementById('offlineStatus');
   elements.versionLabel = document.getElementById('versionLabel');
   elements.installBtn = document.getElementById('installBtn');
@@ -137,8 +139,8 @@ function initElements() {
   elements.costSummary = document.getElementById('costSummary');
   elements.costTotalValue = document.getElementById('costTotalValue');
   elements.costKwh = document.getElementById('costKwh');
-  elements.costBeforeVat = document.getElementById('costBeforeVat');
-  elements.costVat = document.getElementById('costVat');
+  elements.costSoldEnergy = document.getElementById('costSoldEnergy');
+  elements.costReduction = document.getElementById('costReduction');
   elements.costPeriod = document.getElementById('costPeriod');
   elements.costBackBtn = document.getElementById('costBackBtn');
   elements.showBlocksBtn = document.getElementById('showBlocksBtn');
@@ -476,10 +478,12 @@ function init() {
   // Initialize DOM elements
   initElements();
   
-  // Set version in footer
+  // Set version in footer (frontend immediately, backend async)
   if (elements.versionLabel) {
-    elements.versionLabel.textContent = `v${CONFIG.VERSION}`;
+    elements.versionLabel.textContent = `FE v${CONFIG.VERSION}`;
   }
+  fetchBackendVersion();
+  fetchLocationName();
   
   // Set up event listeners
   window.addEventListener('online', updateOnlineStatus);
@@ -662,8 +666,8 @@ function renderCostView(data) {
 
   elements.costTotalValue.textContent = data.total_cost.toFixed(2);
   elements.costKwh.textContent = data.total_consumed_kwh.toFixed(2) + ' kWh';
-  elements.costBeforeVat.textContent = data.cost_before_vat.toFixed(2) + ' kr';
-  elements.costVat.textContent = data.vat_percent + '%';
+  elements.costSoldEnergy.textContent = (data.total_produced_kwh || 0).toFixed(2) + ' kWh';
+  elements.costReduction.textContent = (data.production_benefit || 0).toFixed(2) + ' kr';
   elements.costPeriod.textContent =
     formatShortTime(data.period_start) + ' \u2013 ' + formatShortTime(data.period_stop);
 
@@ -806,6 +810,41 @@ async function saveParam(key, description, content, input, btn) {
     elements.settingsStatus.textContent = `Error: ${error.message}`;
     elements.settingsStatus.className = 'settings-status settings-status-error';
     btn.disabled = false;
+  }
+}
+
+// Fetch backend version and display alongside frontend version
+async function fetchBackendVersion() {
+  try {
+    const response = await fetch(`${CONFIG.API_BASE_URL}/version`);
+    if (!response.ok) return;
+    const data = await response.json();
+    if (elements.versionLabel && data.version) {
+      elements.versionLabel.textContent = `FE v${CONFIG.VERSION} | BE v${data.version}`;
+    }
+  } catch (e) {
+    console.error('Failed to fetch backend version:', e);
+  }
+}
+
+// Fetch location_name param and set as header title
+async function fetchLocationName() {
+  try {
+    const response = await fetch(`${CONFIG.API_BASE_URL}/params/location_name`);
+    if (!response.ok) return;
+    const param = await response.json();
+    let name = param.content;
+    try {
+      const parsed = JSON.parse(param.content);
+      if (parsed && typeof parsed === 'object' && 'value' in parsed) {
+        name = String(parsed.value);
+      }
+    } catch (e) { /* not JSON, use raw */ }
+    if (elements.appTitle && name) {
+      elements.appTitle.textContent = name;
+    }
+  } catch (e) {
+    console.error('Failed to fetch location name:', e);
   }
 }
 

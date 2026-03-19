@@ -32,7 +32,7 @@
       <!-- Header -->
       <header class="dashboard-header">
         <button id="menuBtn" class="menu-btn" aria-label="Menu">☰</button>
-        <h1 class="app-title">Sotehus</h1>
+        <h1 class="app-title" id="appTitle">Sotehus</h1>
         <button id="installBtn" class="install-btn" style="display: none;">
           📲 Install
         </button>
@@ -158,12 +158,12 @@
               <span id="costKwh">--</span>
             </div>
             <div class="cost-detail-row">
-              <span>Cost before VAT</span>
-              <span id="costBeforeVat">--</span>
+              <span>Energy sold to grid</span>
+              <span id="costSoldEnergy">--</span>
             </div>
             <div class="cost-detail-row">
-              <span>VAT</span>
-              <span id="costVat">--</span>
+              <span>Cost reduction</span>
+              <span id="costReduction">--</span>
             </div>
             <div class="cost-detail-row">
               <span>Period</span>
