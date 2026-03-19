@@ -644,18 +644,22 @@ body {
   box-shadow: var(--card-shadow);
   padding: 1rem 1.25rem;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 0.5rem;
 }
 
 .settings-label {
+  width: 100%;
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--text-primary);
 }
 
 .settings-input {
-  width: 100%;
+  flex: 1;
+  min-width: 0;
   padding: 0.625rem 0.75rem;
   border: 2px solid var(--bg-color);
   border-radius: 8px;
@@ -674,7 +678,7 @@ body {
 }
 
 .settings-save-btn {
-  align-self: flex-end;
+  flex-shrink: 0;
   padding: 0.5rem 1.25rem;
   background: var(--success-color);
   color: white;
