@@ -5,7 +5,7 @@
 const CONFIG = {
   API_BASE_URL: 'http://sotehus-pi5:8080/api',
   REFRESH_INTERVAL: 1000, // 1 second
-  VERSION: '1.4.0'
+  VERSION: '1.5.0'
 };
 
 // State
@@ -587,6 +587,15 @@ function setupMenu() {
 
   document.getElementById('menuSettings').addEventListener('click', () => {
     showSettingsView();
+  });
+
+  document.getElementById('menuForceRefresh').addEventListener('click', async () => {
+    closeMenu();
+    const keys = await caches.keys();
+    await Promise.all(keys.map(key => caches.delete(key)));
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    await Promise.all(registrations.map(r => r.unregister()));
+    window.location.reload();
   });
 
   elements.settingsBackBtn.addEventListener('click', showDashboardView);
