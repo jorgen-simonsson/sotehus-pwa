@@ -17,6 +17,7 @@ Swedish Electricity Spot Price & Power Monitoring Dashboard - A Progressive Web 
 - ✅ **Navigation Menu** - Hamburger menu for accessing cost reports and settings
 - ✅ **Dynamic Title** - Header title fetched from backend `location_name` parameter
 - ✅ **Version Display** - Footer shows both frontend and backend versions
+- ✅ **Force Refresh** - Menu option to clear all caches and reload from server
 
 ## Getting Started
 
@@ -57,7 +58,7 @@ Edit `src/js/app.js` to configure the backend API URL:
 const CONFIG = {
   API_BASE_URL: 'http://sotehus-pi5:8080/api',
   REFRESH_INTERVAL: 1000, // 1 second
-  VERSION: '1.4.0'
+  VERSION: '1.5.0'
 };
 ```
 
@@ -103,6 +104,9 @@ You can generate these from a single 512x512 PNG using:
 - [PWA Builder Image Generator](https://www.pwabuilder.com/imageGenerator)
 
 ## Release Log
+
+### v1.5.0
+- Added "Force refresh" menu item that clears all service worker caches, unregisters the service worker, and reloads the page — ensuring the latest version is fetched from the server. Especially useful for iOS Safari home screen PWAs where cache updates can be unreliable.
 
 ### v1.4.0
 - Display both frontend and backend versions in the footer (e.g. `FE v1.4.0 | BE v1.6.0`)
