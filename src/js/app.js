@@ -567,7 +567,7 @@ function setupMenu() {
   elements.menuBtn.addEventListener('click', toggleMenu);
   elements.menuOverlay.addEventListener('click', closeMenu);
 
-  document.querySelectorAll('.menu-item').forEach(item => {
+  document.querySelectorAll('.menu-item[data-period]').forEach(item => {
     item.addEventListener('click', () => {
       showCostView(item.dataset.period);
     });
