@@ -1,10 +1,16 @@
+FROM node:20-alpine AS build
+WORKDIR /app
+COPY package.json ./
+COPY src/ src/
+RUN mkdir -p dist && npm run build
+
 FROM nginx:alpine
 
 # Copy nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Copy PWA files
-COPY src/ /usr/share/nginx/html/
+# Copy built PWA files
+COPY --from=build /app/dist/ /usr/share/nginx/html/
 
 # Expose port 80
 EXPOSE 80

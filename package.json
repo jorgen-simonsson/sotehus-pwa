@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "npx serve dist",
-    "build": "npm run copy-assets",
+    "build": "npm run copy-assets && npm run stamp-version",
     "copy-assets": "cp -r src/* dist/",
+    "stamp-version": "node -e \"const fs=require('fs');const v=fs.readFileSync('src/js/app.js','utf8').match(/VERSION:\\s*'([^']+)'/)[1];const sw=fs.readFileSync('dist/sw.js','utf8').replace(/__VERSION__/g,v);fs.writeFileSync('dist/sw.js',sw);console.log('Stamped sw.js with version '+v);\"",
     "dev": "npx serve src"
   },
   "keywords": [

@@ -1,6 +1,6 @@
-const CACHE_NAME = 'sotehus-pwa-v2';
-const STATIC_CACHE = 'static-v2';
-const DYNAMIC_CACHE = 'dynamic-v2';
+const CACHE_NAME = 'sotehus-pwa-__VERSION__';
+const STATIC_CACHE = 'static-__VERSION__';
+const DYNAMIC_CACHE = 'dynamic-__VERSION__';
 
 // Assets to cache on install
 const STATIC_ASSETS = [
