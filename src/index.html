@@ -21,6 +21,7 @@
   
   <title>Sotehus</title>
   <link rel="stylesheet" href="/css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 </head>
 <body>
   <main class="dashboard">
@@ -134,6 +135,7 @@
       <!-- Cost View -->
       <div id="costView" class="hidden">
         <header class="cost-header">
+          <button id="costBackBtn" class="back-arrow-btn" aria-label="Back">←</button>
           <h2 id="costTitle">Cost</h2>
         </header>
 
@@ -171,16 +173,22 @@
               <span id="costPeriod">--</span>
             </div>
           </div>
+
+          <!-- Cost Chart -->
+          <div class="cost-chart-card">
+            <canvas id="costChart"></canvas>
+          </div>
         </div>
 
         <button id="showBlocksBtn" class="blocks-btn hidden">Included price periods</button>
-
-        <button id="costBackBtn" class="back-btn">← Back</button>
       </div><!-- /costView -->
 
       <!-- Blocks View -->
       <div id="blocksView" class="hidden">
-        <button id="blocksBackBtn" class="back-btn">← Back</button>
+        <header class="cost-header">
+          <button id="blocksBackBtn" class="back-arrow-btn" aria-label="Back">←</button>
+          <h2>Price periods</h2>
+        </header>
         <div class="cost-table-wrapper">
           <table class="cost-table">
             <thead>
@@ -199,6 +207,7 @@
       <!-- Settings View -->
       <div id="settingsView" class="hidden">
         <header class="cost-header">
+          <button id="settingsBackBtn" class="back-arrow-btn" aria-label="Back">←</button>
           <h2>Settings</h2>
         </header>
 
@@ -212,8 +221,6 @@
         <div id="settingsList" class="settings-list hidden"></div>
 
         <div id="settingsStatus" class="settings-status"></div>
-
-        <button id="settingsBackBtn" class="back-btn">← Back</button>
       </div><!-- /settingsView -->
 
     </div>
