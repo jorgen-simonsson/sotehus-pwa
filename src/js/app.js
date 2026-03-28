@@ -5,7 +5,7 @@
 const CONFIG = {
   API_BASE_URL: 'http://sotehus-pi5:8080/api',
   REFRESH_INTERVAL: 1000, // 1 second
-  VERSION: '1.5.0'
+  VERSION: '1.6.0'
 };
 
 // State
@@ -78,6 +78,7 @@ const elements = {
   blocksView: null,
   blocksBackBtn: null,
   costTableBody: null,
+  costChart: null,
 
   // Settings view
   settingsView: null,
@@ -149,6 +150,7 @@ function initElements() {
   elements.blocksView = document.getElementById('blocksView');
   elements.blocksBackBtn = document.getElementById('blocksBackBtn');
   elements.costTableBody = document.getElementById('costTableBody');
+  elements.costChart = document.getElementById('costChart');
 
   // Settings view
   elements.settingsView = document.getElementById('settingsView');
@@ -698,6 +700,99 @@ function renderCostView(data) {
     tr.innerHTML = '<td colspan="4" style="text-align:center">No data for this period</td>';
     tbody.appendChild(tr);
   }
+
+  // Render cost chart
+  renderCostChart(data.blocks || []);
+}
+
+// Chart instance reference
+let costChartInstance = null;
+
+function renderCostChart(blocks) {
+  if (!elements.costChart || !blocks.length) return;
+
+  // Destroy previous chart instance
+  if (costChartInstance) {
+    costChartInstance.destroy();
+    costChartInstance = null;
+  }
+
+  const labels = blocks.map(b => {
+    const d = new Date(b.start);
+    return d.toLocaleString('sv-SE', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+  });
+
+  const consumedData = blocks.map(b => b.consumed_kwh);
+  const producedData = blocks.map(b => b.produced_kwh || 0);
+  const costData = blocks.map(b => b.cost);
+
+  const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)';
+  const textColor = isDark ? '#a0a0b0' : '#666666';
+
+  costChartInstance = new Chart(elements.costChart, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Consumed (kWh)',
+          data: consumedData,
+          backgroundColor: 'rgba(153, 27, 27, 0.8)',
+          borderRadius: 3,
+          order: 2
+        },
+        {
+          label: 'Produced (kWh)',
+          data: producedData,
+          backgroundColor: 'rgba(30, 58, 138, 0.8)',
+          borderRadius: 3,
+          order: 3
+        },
+        {
+          label: 'Cost (kr)',
+          data: costData,
+          type: 'line',
+          borderColor: '#22c55e',
+          backgroundColor: 'rgba(34, 197, 94, 0.1)',
+          borderWidth: 2,
+          pointRadius: 2,
+          fill: true,
+          tension: 0.3,
+          yAxisID: 'yCost',
+          order: 1
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: {
+          labels: { color: textColor, boxWidth: 12, font: { size: 11 } }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: textColor, maxRotation: 45, font: { size: 10 }, maxTicksLimit: 12 },
+          grid: { color: gridColor }
+        },
+        y: {
+          position: 'left',
+          title: { display: true, text: 'kWh', color: textColor, font: { size: 11 } },
+          ticks: { color: textColor, font: { size: 10 } },
+          grid: { color: gridColor }
+        },
+        yCost: {
+          position: 'right',
+          title: { display: true, text: 'kr', color: textColor, font: { size: 11 } },
+          ticks: { color: textColor, font: { size: 10 } },
+          grid: { drawOnChartArea: false }
+        }
+      }
+    }
+  });
 }
 
 // --- Settings ---
