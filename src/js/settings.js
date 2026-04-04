@@ -1,5 +1,6 @@
 import { CONFIG } from './config.js';
 import { elements } from './elements.js';
+import { tryParseJson } from './utils.js';
 
 export async function loadSettings() {
   try {
@@ -32,13 +33,11 @@ function renderSettings(params) {
 
     let displayValue = param.content;
     let isJsonWrapped = false;
-    try {
-      const parsed = JSON.parse(param.content);
-      if (parsed && typeof parsed === 'object' && 'value' in parsed) {
-        displayValue = String(parsed.value);
-        isJsonWrapped = true;
-      }
-    } catch (e) { /* not JSON, use raw */ }
+    const parsed = tryParseJson(param.content);
+    if (parsed && typeof parsed === 'object' && 'value' in parsed) {
+      displayValue = String(parsed.value);
+      isJsonWrapped = true;
+    }
 
     const input = document.createElement('input');
     input.type = 'text';

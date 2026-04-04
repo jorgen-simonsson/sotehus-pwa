@@ -3,6 +3,7 @@
 
 import { CONFIG, state } from './config.js';
 import { elements, initElements } from './elements.js';
+import { tryParseJson } from './utils.js';
 import { fetchData } from './api.js';
 import { registerServiceWorker, setupInstallPrompt } from './pwa.js';
 import { setupMenu, startRefresh } from './menu.js';
@@ -56,12 +57,10 @@ async function fetchLocationName() {
     if (!response.ok) return;
     const param = await response.json();
     let name = param.content;
-    try {
-      const parsed = JSON.parse(param.content);
-      if (parsed && typeof parsed === 'object' && 'value' in parsed) {
-        name = String(parsed.value);
-      }
-    } catch (e) { /* not JSON, use raw */ }
+    const parsed = tryParseJson(param.content);
+    if (parsed && typeof parsed === 'object' && 'value' in parsed) {
+      name = String(parsed.value);
+    }
     if (elements.appTitle && name) {
       elements.appTitle.textContent = name;
     }

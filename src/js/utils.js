@@ -1,3 +1,11 @@
+export function tryParseJson(str) {
+  try {
+    return JSON.parse(str);
+  } catch {
+    return null;
+  }
+}
+
 export function formatTimestamp(isoString) {
   if (!isoString) return '';
   const date = new Date(isoString);
