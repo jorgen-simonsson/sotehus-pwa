@@ -35,16 +35,16 @@ function updateApp() {
   if (navigator.serviceWorker.controller) {
     navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' });
   }
-  window.location.reload();
+  globalThis.location.reload();
 }
 
 // Make updateApp available globally for inline onclick handler
-window.updateApp = updateApp;
+globalThis.updateApp = updateApp;
 
 let deferredPrompt = null;
 
 export function setupInstallPrompt() {
-  window.addEventListener('beforeinstallprompt', (e) => {
+  globalThis.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
 
@@ -66,7 +66,7 @@ export function setupInstallPrompt() {
     });
   }
 
-  window.addEventListener('appinstalled', () => {
+  globalThis.addEventListener('appinstalled', () => {
     console.log('PWA was installed');
     deferredPrompt = null;
     if (elements.installBtn) {

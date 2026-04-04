@@ -126,7 +126,7 @@ export function setupMenu() {
     await Promise.all(keys.map(key => caches.delete(key)));
     const registrations = await navigator.serviceWorker.getRegistrations();
     await Promise.all(registrations.map(r => r.unregister()));
-    window.location.reload();
+    globalThis.location.reload();
   });
 
   elements.settingsBackBtn.addEventListener('click', showDashboardView);

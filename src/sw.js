@@ -28,7 +28,7 @@ const API_PATTERNS = [
 ];
 
 // Install event - cache static assets
-self.addEventListener('install', (event) => {
+globalThis.addEventListener('install', (event) => {
   console.log('[Service Worker] Installing...');
   event.waitUntil(
     caches.open(STATIC_CACHE)
@@ -36,12 +36,12 @@ self.addEventListener('install', (event) => {
         console.log('[Service Worker] Caching static assets');
         return cache.addAll(STATIC_ASSETS);
       })
-      .then(() => self.skipWaiting())
+      .then(() => globalThis.skipWaiting())
   );
 });
 
 // Activate event - clean up old caches
-self.addEventListener('activate', (event) => {
+globalThis.addEventListener('activate', (event) => {
   console.log('[Service Worker] Activating...');
   event.waitUntil(
     caches.keys()
@@ -55,7 +55,7 @@ self.addEventListener('activate', (event) => {
             })
         );
       })
-      .then(() => self.clients.claim())
+      .then(() => globalThis.clients.claim())
   );
 });
 
@@ -65,7 +65,7 @@ function isApiRequest(url) {
 }
 
 // Fetch event - serve from cache, fallback to network
-self.addEventListener('fetch', (event) => {
+globalThis.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
@@ -80,7 +80,7 @@ self.addEventListener('fetch', (event) => {
       fetch(request)
         .then((response) => {
           // Cache successful API responses
-          if (response && response.status === 200) {
+          if (response?.status === 200) {
             const responseToCache = response.clone();
             caches.open(DYNAMIC_CACHE)
               .then((cache) => cache.put(request, responseToCache));
@@ -108,19 +108,14 @@ self.addEventListener('fetch', (event) => {
         // Not in cache, fetch from network
         return fetch(request)
           .then((response) => {
-            // Don't cache non-successful responses
-            if (!response || response.status !== 200 || response.type !== 'basic') {
-              return response;
+            // Cache successful basic responses
+            if (response?.status === 200 && response?.type === 'basic') {
+              const responseToCache = response.clone();
+              caches.open(DYNAMIC_CACHE)
+                .then((cache) => {
+                  cache.put(request, responseToCache);
+                });
             }
-
-            // Clone the response
-            const responseToCache = response.clone();
-
-            // Add to dynamic cache
-            caches.open(DYNAMIC_CACHE)
-              .then((cache) => {
-                cache.put(request, responseToCache);
-              });
 
             return response;
           })
@@ -139,7 +134,7 @@ self.addEventListener('fetch', (event) => {
 async function updateCache(request) {
   try {
     const response = await fetch(request);
-    if (response && response.status === 200) {
+    if (response?.status === 200) {
       const cache = await caches.open(DYNAMIC_CACHE);
       await cache.put(request, response);
     }
@@ -150,8 +145,9 @@ async function updateCache(request) {
 }
 
 // Handle messages from clients
-self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting();
+globalThis.addEventListener('message', (event) => {
+  if (event.origin && event.origin !== location.origin) return;
+  if (event.data?.type === 'SKIP_WAITING') {
+    globalThis.skipWaiting();
   }
 });

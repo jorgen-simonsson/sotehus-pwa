@@ -63,7 +63,7 @@ function renderSettings(params) {
       let contentToSave = input.value;
       if (input.dataset.jsonWrapped) {
         const num = Number(contentToSave);
-        const val = isNaN(num) ? contentToSave : num;
+        const val = Number.isNaN(num) ? contentToSave : num;
         contentToSave = JSON.stringify({ value: val });
       }
       saveParam(param.key, input.dataset.description, contentToSave, input, saveBtn);

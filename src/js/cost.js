@@ -73,7 +73,7 @@ function renderCostChart(blocks) {
   const producedData = blocks.map(b => b.produced_kwh || 0);
   const costData = blocks.map(b => b.cost);
 
-  const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const isDark = globalThis.matchMedia('(prefers-color-scheme: dark)').matches;
   const gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)';
   const textColor = isDark ? '#a0a0b0' : '#666666';
 

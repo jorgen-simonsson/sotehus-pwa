@@ -79,8 +79,8 @@ function init() {
   fetchBackendVersion();
   fetchLocationName();
 
-  window.addEventListener('online', updateOnlineStatus);
-  window.addEventListener('offline', updateOnlineStatus);
+  globalThis.addEventListener('online', updateOnlineStatus);
+  globalThis.addEventListener('offline', updateOnlineStatus);
   document.addEventListener('visibilitychange', handleVisibilityChange);
 
   updateOnlineStatus();

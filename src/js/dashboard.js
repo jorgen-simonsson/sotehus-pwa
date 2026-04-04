@@ -1,6 +1,18 @@
 import { elements } from './elements.js';
 import { formatTimestamp, formatPower } from './utils.js';
 
+function setText(el, text) {
+  if (el) el.textContent = text;
+}
+
+function setStyle(el, prop, value) {
+  if (el) el.style[prop] = value;
+}
+
+function setClass(el, className) {
+  if (el) el.className = className;
+}
+
 export function updateUI(data) {
   if (!data) return;
 
@@ -13,117 +25,87 @@ export function updateUI(data) {
 function updatePriceUI(priceData) {
   if (!priceData) return;
 
-  if (elements.priceSpinner) elements.priceSpinner.style.display = 'none';
-  if (elements.priceDisplay) elements.priceDisplay.style.display = 'flex';
+  setStyle(elements.priceSpinner, 'display', 'none');
+  setStyle(elements.priceDisplay, 'display', 'flex');
 
-  if (priceData.valid) {
-    if (elements.priceValue) {
-      elements.priceValue.textContent = priceData.price.toFixed(2);
-    }
-    if (elements.priceError) elements.priceError.textContent = '';
-    if (elements.priceUpdated) {
-      elements.priceUpdated.textContent = `Last updated: ${formatTimestamp(priceData.lastUpdate)}`;
-    }
-  } else {
-    if (elements.priceValue) elements.priceValue.textContent = '--';
-    if (elements.priceError) elements.priceError.textContent = 'Price data unavailable';
+  if (!priceData.valid) {
+    setText(elements.priceValue, '--');
+    setText(elements.priceError, 'Price data unavailable');
+    return;
   }
+
+  setText(elements.priceValue, priceData.price.toFixed(2));
+  setText(elements.priceError, '');
+  setText(elements.priceUpdated, `Last updated: ${formatTimestamp(priceData.lastUpdate)}`);
 }
 
 function updatePowerUI(gridData) {
   if (!gridData) return;
 
-  if (elements.powerSpinner) elements.powerSpinner.style.display = 'none';
-  if (elements.powerDisplay) elements.powerDisplay.style.display = 'flex';
+  setStyle(elements.powerSpinner, 'display', 'none');
+  setStyle(elements.powerDisplay, 'display', 'flex');
 
-  if (gridData.valid) {
-    const formatted = formatPower(gridData.power);
-    if (elements.powerValue) {
-      elements.powerValue.textContent = Math.round(gridData.power);
-    }
-    if (elements.powerStatus) {
-      elements.powerStatus.textContent = '🟢 Connected';
-      elements.powerStatus.className = 'status-indicator connected';
-    }
-    if (elements.powerError) elements.powerError.textContent = '';
-    if (elements.powerUpdated) {
-      elements.powerUpdated.textContent = `Last updated: ${formatTimestamp(gridData.lastUpdate)}`;
-    }
-  } else {
-    if (elements.powerValue) elements.powerValue.textContent = '--';
-    if (elements.powerStatus) {
-      elements.powerStatus.textContent = gridData.message || 'Connecting...';
-      elements.powerStatus.className = 'status-indicator';
-    }
-    if (elements.powerError && gridData.message) {
-      elements.powerError.textContent = gridData.message;
-    }
+  if (!gridData.valid) {
+    setText(elements.powerValue, '--');
+    setText(elements.powerStatus, gridData.message || 'Connecting...');
+    setClass(elements.powerStatus, 'status-indicator');
+    if (gridData.message) setText(elements.powerError, gridData.message);
+    return;
   }
+
+  setText(elements.powerValue, Math.round(gridData.power));
+  setText(elements.powerStatus, '🟢 Connected');
+  setClass(elements.powerStatus, 'status-indicator connected');
+  setText(elements.powerError, '');
+  setText(elements.powerUpdated, `Last updated: ${formatTimestamp(gridData.lastUpdate)}`);
 }
 
 function updateSolarUI(solarData) {
   if (!solarData) return;
 
-  if (elements.solarSpinner) elements.solarSpinner.style.display = 'none';
-  if (elements.solarDisplay) elements.solarDisplay.style.display = 'flex';
+  setStyle(elements.solarSpinner, 'display', 'none');
+  setStyle(elements.solarDisplay, 'display', 'flex');
 
-  if (solarData.valid) {
-    const powerInWatts = solarData.power * 1000;
-    const formatted = formatPower(powerInWatts);
-    if (elements.solarValue) {
-      elements.solarValue.textContent = formatted.value;
-    }
-    if (elements.solarUnit) {
-      elements.solarUnit.textContent = formatted.unit;
-    }
-    if (elements.solarStatus) {
-      if (powerInWatts > 0) {
-        elements.solarStatus.textContent = '☀️ Producing power';
-        elements.solarStatus.className = 'status-indicator producing';
-      } else {
-        elements.solarStatus.textContent = '🌙 No production';
-        elements.solarStatus.className = 'status-indicator no-production';
-      }
-    }
-    if (elements.solarError) elements.solarError.textContent = '';
-    if (elements.solarUpdated) {
-      elements.solarUpdated.textContent = `Last updated: ${formatTimestamp(solarData.lastUpdate)}`;
-    }
-  } else {
-    if (elements.solarValue) elements.solarValue.textContent = '--';
-    if (elements.solarUnit) elements.solarUnit.textContent = 'W';
-    if (elements.solarStatus) {
-      elements.solarStatus.textContent = solarData.message || 'No solar data';
-      elements.solarStatus.className = 'status-indicator';
-    }
+  if (!solarData.valid) {
+    setText(elements.solarValue, '--');
+    setText(elements.solarUnit, 'W');
+    setText(elements.solarStatus, solarData.message || 'No solar data');
+    setClass(elements.solarStatus, 'status-indicator');
+    return;
   }
+
+  const powerInWatts = solarData.power * 1000;
+  const formatted = formatPower(powerInWatts);
+  const producing = powerInWatts > 0;
+  setText(elements.solarValue, formatted.value);
+  setText(elements.solarUnit, formatted.unit);
+  setText(elements.solarStatus, producing ? '☀️ Producing power' : '🌙 No production');
+  setClass(elements.solarStatus, producing ? 'status-indicator producing' : 'status-indicator no-production');
+  setText(elements.solarError, '');
+  setText(elements.solarUpdated, `Last updated: ${formatTimestamp(solarData.lastUpdate)}`);
 }
 
 function updateFrequencyUI(frequencyData) {
   if (!frequencyData) return;
 
-  if (elements.frequencySpinner) elements.frequencySpinner.style.display = 'none';
-  if (elements.frequencyDisplay) elements.frequencyDisplay.style.display = 'flex';
+  setStyle(elements.frequencySpinner, 'display', 'none');
+  setStyle(elements.frequencyDisplay, 'display', 'flex');
 
-  if (frequencyData.valid) {
-    if (elements.frequencyValue) {
-      elements.frequencyValue.textContent = frequencyData.frequency.toFixed(2);
-    }
-    if (elements.frequencyError) elements.frequencyError.textContent = '';
-    if (elements.frequencyUpdated) {
-      elements.frequencyUpdated.textContent = `Last updated: ${formatTimestamp(frequencyData.lastUpdate)}`;
-    }
-  } else {
-    if (elements.frequencyValue) elements.frequencyValue.textContent = '--';
-    if (elements.frequencyError && frequencyData.message) {
-      elements.frequencyError.textContent = frequencyData.message;
-    }
+  if (!frequencyData.valid) {
+    setText(elements.frequencyValue, '--');
+    if (frequencyData.message) setText(elements.frequencyError, frequencyData.message);
+    return;
   }
+
+  setText(elements.frequencyValue, frequencyData.frequency.toFixed(2));
+  setText(elements.frequencyError, '');
+  setText(elements.frequencyUpdated, `Last updated: ${formatTimestamp(frequencyData.lastUpdate)}`);
 }
 
 export function showError(message) {
-  if (elements.priceError) elements.priceError.textContent = `Error: ${message}`;
-  if (elements.powerError) elements.powerError.textContent = `Error: ${message}`;
-  if (elements.solarError) elements.solarError.textContent = `Error: ${message}`;
-  if (elements.frequencyError) elements.frequencyError.textContent = `Error: ${message}`;
+  const text = `Error: ${message}`;
+  setText(elements.priceError, text);
+  setText(elements.powerError, text);
+  setText(elements.solarError, text);
+  setText(elements.frequencyError, text);
 }
