@@ -52,13 +52,13 @@ The app will be available at `http://localhost:8000`
 
 ## Configuration
 
-Edit `src/js/app.js` to configure the backend API URL:
+Edit `src/js/config.js` to configure the backend API URL:
 
 ```javascript
-const CONFIG = {
+export const CONFIG = {
   API_BASE_URL: 'http://sotehus-pi5:8080/api',
   REFRESH_INTERVAL: 1000, // 1 second
-  VERSION: '1.5.0'
+  VERSION: '1.8.0'
 };
 ```
 
@@ -67,22 +67,40 @@ const CONFIG = {
 ```
 sotehus-pwa/
 ├── src/
-│   ├── index.html        # Main HTML file
+│   ├── index.html        # Main HTML file (all views live in one DOM, toggled via CSS)
 │   ├── manifest.json     # PWA manifest
-│   ├── sw.js             # Service Worker
+│   ├── sw.js             # Service Worker (cache-first static assets, network-first API calls)
 │   ├── css/
-│   │   └── styles.css    # Styles
-│   ├── js/
-│   │   └── app.js        # Main JavaScript
-│   └── icons/            # PWA icons
+│   │   └── styles.css    # All styles; theme colors as CSS variables, dark mode via prefers-color-scheme
+│   ├── js/                # ES modules, no bundler — see "JavaScript Modules" below
+│   └── icons/             # PWA icons
 ├── doc/
-│   ├── openapi.json      # Backend OpenAPI spec
-│   └── cost_plan.md      # Implementation plan
+│   └── openapi.json      # Backend OpenAPI spec
 ├── Dockerfile            # Docker image definition
 ├── docker-compose.yml    # Docker Compose configuration
 ├── nginx.conf            # Nginx configuration
 └── README.md
 ```
+
+### JavaScript Modules
+
+`src/js/` has no build step or bundler — each file is a native ES module, loaded via `<script type="module" src="/js/app.js">`, with the rest pulled in via `import`. When adding a new module, also list it in `STATIC_ASSETS` in `src/sw.js` so it's precached by the service worker.
+
+| File | Covers |
+|---|---|
+| `app.js` | Entry point. Initializes the DOM cache, wires up the hamburger menu and view-navigation click handlers, registers listeners, and starts the dashboard refresh loop. |
+| `config.js` | `CONFIG` — API base URL, poll interval, and app `VERSION` (bumping this invalidates the service worker cache on next deploy). |
+| `state.js` | Shared `isOnline` flag as a live ES module binding, updated via `setOnline()` and read by the refresh loops in `dashboard.js` / `solis.js`. |
+| `dom.js` | The `elements` object (cached `getElementById` lookups for every view) and `initElements()`, which populates it once on startup. |
+| `format.js` | Formatting helpers shared across views: timestamps, W/kW power formatting, local ISO timestamps for the cost API, short time labels. |
+| `views.js` | `showDashboardView` / `showSolisView` / `showCostView` / `showSettingsView` — toggles the `hidden` class between views and starts/stops the correct feature module's refresh loop. |
+| `menu.js` | Opens/closes the hamburger dropdown (`toggleMenu`, `closeMenu`). |
+| `dashboard.js` | The main dashboard: fetches `/api/data` every second and renders the price, grid power, solar, and frequency cards; owns `startRefresh`/`stopRefresh`. |
+| `solis.js` | The "Sotehus Solis" power-flow view: fetches `/api/solis` on its own refresh loop and renders the solar/grid/battery/load values, labels, and animated SVG flow lines. |
+| `cost.js` | The cost report view: date-range calculation, fetching `/api/energy/cost`, rendering the summary/table, and the Chart.js cost chart. |
+| `settings.js` | The settings view: fetches `/api/params`, renders editable rows, and saves changes via `PUT /api/params/{key}`. |
+| `pwa.js` | Service worker registration, update notifications, the install-prompt flow, and online/visibility change handling. |
+| `meta.js` | Fetches the backend version (for the footer) and the `location_name` param (for the header title). |
 
 ## Adding Icons
 
@@ -104,6 +122,12 @@ You can generate these from a single 512x512 PNG using:
 - [PWA Builder Image Generator](https://www.pwabuilder.com/imageGenerator)
 
 ## Release Log
+
+### v1.8.0
+- **Refactored `src/js/app.js`** (previously ~1100 lines containing all application logic) **into focused ES modules** — `config.js`, `state.js`, `dom.js`, `format.js`, `views.js`, `menu.js`, `dashboard.js`, `solis.js`, `cost.js`, `settings.js`, `pwa.js`, `meta.js` — with `app.js` reduced to the entry point that wires them together. See [JavaScript Modules](#javascript-modules) for what each file covers. No behavior change; loaded via native `<script type="module">`, no bundler introduced.
+- Added the **"Sotehus Solis" view** (first menu item): a star-topology diagram showing solar, grid, battery, and household load as icons around a central hub, connected by animated SVG lines that indicate power-flow direction. Polls `/api/solis` on the same 1-second interval as the dashboard while the view is open.
+  - Grid shows Importing/Exporting depending on the sign of `grid_power`; battery shows Charging/Discharging/Standby depending on `battery_power` plus its SOC%.
+  - Grid node uses a custom transmission-tower SVG icon instead of an emoji.
 
 ### v1.5.0
 - Added "Force refresh" menu item that clears all service worker caches, unregisters the service worker, and reloads the page — ensuring the latest version is fetched from the server. Especially useful for iOS Safari home screen PWAs where cache updates can be unreliable.
