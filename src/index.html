@@ -42,6 +42,7 @@
       <!-- Menu Dropdown -->
       <div id="menuOverlay" class="menu-overlay hidden"></div>
       <nav id="menuDropdown" class="menu-dropdown hidden">
+        <button class="menu-item" id="menuSolis">☀️ Solis</button>
         <button class="menu-item" data-period="lastHour">💰 Cost last hour</button>
         <button class="menu-item" data-period="last24h">💰 Cost last 24 hours</button>
         <button class="menu-item" data-period="lastMonth">💰 Cost last calendar month</button>
@@ -131,6 +132,70 @@
       </footer>
 
       </div><!-- /dashboardView -->
+
+      <!-- Solis View -->
+      <div id="solisView" class="hidden">
+        <header class="cost-header">
+          <button id="solisBackBtn" class="back-arrow-btn" aria-label="Back">←</button>
+          <h2>Sotehus Solis</h2>
+        </header>
+
+        <div id="solisError" class="cost-error"></div>
+
+        <div class="solis-diagram">
+          <svg class="solis-lines" viewBox="0 0 300 300" preserveAspectRatio="xMidYMid meet">
+            <line id="lineSolar" class="flow-line line-solar" x1="150" y1="150" x2="150" y2="50"></line>
+            <line id="lineGrid" class="flow-line line-grid" x1="150" y1="150" x2="50" y2="150"></line>
+            <line id="lineBattery" class="flow-line line-battery" x1="150" y1="150" x2="250" y2="150"></line>
+            <line id="lineLoad" class="flow-line line-load" x1="150" y1="150" x2="150" y2="250"></line>
+          </svg>
+
+          <div class="solis-hub"></div>
+
+          <div class="solis-node solis-node-solar">
+            <div class="solis-icon">☀️</div>
+            <div class="solis-value" id="solisSolarValue">-- kW</div>
+          </div>
+
+          <div class="solis-node solis-node-grid">
+            <div class="solis-icon solis-icon-tower">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 2 L8 9 L5 15 L3 22" />
+                <path d="M12 2 L16 9 L19 15 L21 22" />
+                <path d="M8 9 H16" />
+                <path d="M5 15 H19" />
+                <path d="M12 2 V22" />
+                <path d="M4 6 L8 9" />
+                <path d="M20 6 L16 9" />
+                <path d="M1 12 L5 15" />
+                <path d="M23 12 L19 15" />
+              </svg>
+            </div>
+            <div class="solis-value" id="solisGridValue">-- kW</div>
+            <div class="solis-label" id="solisGridLabel">--</div>
+          </div>
+
+          <div class="solis-node solis-node-battery">
+            <div class="solis-icon solis-icon-battery">
+              <svg viewBox="0 0 40 22" aria-hidden="true">
+                <rect class="battery-body" x="2" y="3" width="32" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="1.5" />
+                <rect class="battery-nub" x="34.5" y="8" width="3" height="6" rx="1.3" fill="currentColor" />
+                <rect id="solisBatteryFillRect" class="battery-fill" x="4.5" y="5.5" width="0" height="11" rx="1.5" />
+              </svg>
+            </div>
+            <div class="solis-value" id="solisBatteryValue">-- kW</div>
+            <div class="solis-label" id="solisBatteryLabel">--</div>
+            <div class="solis-soc" id="solisBatterySoc">--%</div>
+          </div>
+
+          <div class="solis-node solis-node-load">
+            <div class="solis-icon">🏠</div>
+            <div class="solis-value" id="solisLoadValue">-- kW</div>
+          </div>
+        </div>
+
+        <div class="last-updated" id="solisUpdated"></div>
+      </div><!-- /solisView -->
 
       <!-- Cost View -->
       <div id="costView" class="hidden">
@@ -226,6 +291,6 @@
     </div>
   </main>
 
-  <script src="/js/app.js"></script>
+  <script type="module" src="/js/app.js"></script>
 </body>
 </html>
