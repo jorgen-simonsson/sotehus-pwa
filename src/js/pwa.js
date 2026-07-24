@@ -9,6 +9,12 @@ export async function registerServiceWorker() {
       const registration = await navigator.serviceWorker.register('/sw.js');
       console.log('ServiceWorker registered:', registration.scope);
 
+      // Proactively check for a newer service worker on every load. Without this,
+      // an already-controlled page relies solely on the browser's ~24h automatic
+      // update-check heuristic (or a visibilitychange event), which lets iOS
+      // Safari sit on a stale cache for a long time after a new version deploys.
+      registration.update();
+
       // Check for updates
       registration.addEventListener('updatefound', () => {
         const newWorker = registration.installing;

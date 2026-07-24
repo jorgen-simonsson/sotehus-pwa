@@ -58,7 +58,7 @@ Edit `src/js/config.js` to configure the backend API URL:
 export const CONFIG = {
   API_BASE_URL: 'http://sotehus-pi5:8080/api',
   REFRESH_INTERVAL: 1000, // 1 second
-  VERSION: '1.9.0'
+  VERSION: '1.9.1'
 };
 ```
 
@@ -122,6 +122,9 @@ You can generate these from a single 512x512 PNG using:
 - [PWA Builder Image Generator](https://www.pwabuilder.com/imageGenerator)
 
 ## Release Log
+
+### v1.9.1
+- Fixed stale caching on iOS Safari: the service worker's install step now fetches static assets with `{ cache: 'reload' }` instead of `cache.addAll()`, so it can no longer silently reuse still-"fresh" (per nginx's `max-age`) but outdated JS/CSS from the HTTP cache when precaching a new version. Also calls `registration.update()` immediately on every load instead of relying solely on the browser's ~24h automatic update-check heuristic.
 
 ### v1.9.0
 - Added a **battery SOC chart** to the "Sotehus Solis" view, shown below the power-flow diagram. Fetches `/api/solis/soc` (15-minute aggregation over the last 24 hours, 96 data points) and renders it as a Chart.js line chart; refreshes independently on a 1-minute timer, separate from the 1-second power-flow poll.
