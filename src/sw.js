@@ -37,7 +37,14 @@ self.addEventListener('install', (event) => {
     caches.open(STATIC_CACHE)
       .then((cache) => {
         console.log('[Service Worker] Caching static assets');
-        return cache.addAll(STATIC_ASSETS);
+        // Bypass the HTTP cache: cache.addAll() would otherwise silently reuse
+        // stale, still-fresh (per nginx's max-age) responses from Safari's disk
+        // cache instead of fetching the newly deployed files.
+        return Promise.all(
+          STATIC_ASSETS.map((url) =>
+            fetch(url, { cache: 'reload' }).then((response) => cache.put(url, response))
+          )
+        );
       })
       .then(() => self.skipWaiting())
   );
