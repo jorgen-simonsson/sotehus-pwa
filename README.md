@@ -58,7 +58,7 @@ Edit `src/js/config.js` to configure the backend API URL:
 export const CONFIG = {
   API_BASE_URL: 'http://sotehus-pi5:8080/api',
   REFRESH_INTERVAL: 1000, // 1 second
-  VERSION: '1.8.0'
+  VERSION: '1.9.0'
 };
 ```
 
@@ -96,7 +96,7 @@ sotehus-pwa/
 | `views.js` | `showDashboardView` / `showSolisView` / `showCostView` / `showSettingsView` — toggles the `hidden` class between views and starts/stops the correct feature module's refresh loop. |
 | `menu.js` | Opens/closes the hamburger dropdown (`toggleMenu`, `closeMenu`). |
 | `dashboard.js` | The main dashboard: fetches `/api/data` every second and renders the price, grid power, solar, and frequency cards; owns `startRefresh`/`stopRefresh`. |
-| `solis.js` | The "Sotehus Solis" power-flow view: fetches `/api/solis` on its own refresh loop and renders the solar/grid/battery/load values, labels, and animated SVG flow lines. |
+| `solis.js` | The "Sotehus Solis" power-flow view: fetches `/api/solis` on its own refresh loop and renders the solar/grid/battery/load values, labels, and animated SVG flow lines. Also fetches `/api/solis/soc` once a minute and renders the 24h battery SOC line chart via Chart.js. |
 | `cost.js` | The cost report view: date-range calculation, fetching `/api/energy/cost`, rendering the summary/table, and the Chart.js cost chart. |
 | `settings.js` | The settings view: fetches `/api/params`, renders editable rows, and saves changes via `PUT /api/params/{key}`. |
 | `pwa.js` | Service worker registration, update notifications, the install-prompt flow, and online/visibility change handling. |
@@ -122,6 +122,9 @@ You can generate these from a single 512x512 PNG using:
 - [PWA Builder Image Generator](https://www.pwabuilder.com/imageGenerator)
 
 ## Release Log
+
+### v1.9.0
+- Added a **battery SOC chart** to the "Sotehus Solis" view, shown below the power-flow diagram. Fetches `/api/solis/soc` (15-minute aggregation over the last 24 hours, 96 data points) and renders it as a Chart.js line chart; refreshes independently on a 1-minute timer, separate from the 1-second power-flow poll.
 
 ### v1.8.0
 - **Refactored `src/js/app.js`** (previously ~1100 lines containing all application logic) **into focused ES modules** — `config.js`, `state.js`, `dom.js`, `format.js`, `views.js`, `menu.js`, `dashboard.js`, `solis.js`, `cost.js`, `settings.js`, `pwa.js`, `meta.js` — with `app.js` reduced to the entry point that wires them together. See [JavaScript Modules](#javascript-modules) for what each file covers. No behavior change; loaded via native `<script type="module">`, no bundler introduced.
@@ -190,6 +193,8 @@ The PWA connects to the sotehus-backend API at `http://sotehus-pi5:8080/api`. Fu
 | Endpoint | Method | Description |
 |---|---|---|
 | `/api/data` | GET | Real-time dashboard data (price, grid, solar, frequency) |
+| `/api/solis` | GET | Real-time Solis power-flow data (solar, grid, battery, load) |
+| `/api/solis/soc?start=...&stop=...&am=...` | GET | Battery SOC data points for a period, aggregated into `am`-minute windows |
 | `/api/energy/cost?start=...&stop=...` | GET | Energy cost for a time period with price period blocks |
 | `/api/params` | GET | List all configurable parameters |
 | `/api/params/{key}` | PUT | Update a parameter value |
