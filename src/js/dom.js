@@ -60,6 +60,7 @@ export const elements = {
   solisBatterySoc: null,
   solisBatteryFillRect: null,
   solisLoadValue: null,
+  solisSocChart: null,
   lineSolar: null,
   lineGrid: null,
   lineBattery: null,
@@ -150,6 +151,7 @@ export function initElements() {
   elements.solisBatterySoc = document.getElementById('solisBatterySoc');
   elements.solisBatteryFillRect = document.getElementById('solisBatteryFillRect');
   elements.solisLoadValue = document.getElementById('solisLoadValue');
+  elements.solisSocChart = document.getElementById('solisSocChart');
   elements.lineSolar = document.getElementById('lineSolar');
   elements.lineGrid = document.getElementById('lineGrid');
   elements.lineBattery = document.getElementById('lineBattery');

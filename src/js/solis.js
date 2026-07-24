@@ -1,12 +1,14 @@
 import { CONFIG } from './config.js';
 import { elements } from './dom.js';
 import { isOnline } from './state.js';
-import { formatTimestamp, formatKw } from './format.js';
+import { formatTimestamp, formatKw, formatLocalISO, formatShortTime } from './format.js';
 
 let solisRefreshTimer = null;
+let solisSocRefreshTimer = null;
 
 export function startSolisRefresh() {
   fetchSolisData();
+  fetchSolisSocData();
 
   if (solisRefreshTimer) clearInterval(solisRefreshTimer);
   solisRefreshTimer = setInterval(() => {
@@ -14,12 +16,23 @@ export function startSolisRefresh() {
       fetchSolisData();
     }
   }, CONFIG.REFRESH_INTERVAL);
+
+  if (solisSocRefreshTimer) clearInterval(solisSocRefreshTimer);
+  solisSocRefreshTimer = setInterval(() => {
+    if (isOnline) {
+      fetchSolisSocData();
+    }
+  }, CONFIG.SOLIS_SOC_REFRESH_INTERVAL);
 }
 
 export function stopSolisRefresh() {
   if (solisRefreshTimer) {
     clearInterval(solisRefreshTimer);
     solisRefreshTimer = null;
+  }
+  if (solisSocRefreshTimer) {
+    clearInterval(solisSocRefreshTimer);
+    solisSocRefreshTimer = null;
   }
 }
 
@@ -87,4 +100,83 @@ function updateSolisUI(data) {
   if (elements.solisUpdated) {
     elements.solisUpdated.textContent = `Last updated: ${formatTimestamp(data.timestamp)}`;
   }
+}
+
+// 15-minute aggregation over 24h = 96 data points
+const SOC_AGGREGATION_MINUTES = 15;
+
+async function fetchSolisSocData() {
+  try {
+    const stop = new Date();
+    const start = new Date(stop.getTime() - 24 * 60 * 60 * 1000);
+    const url = `${CONFIG.API_BASE_URL}/solis/soc`
+      + `?start=${encodeURIComponent(formatLocalISO(start))}`
+      + `&stop=${encodeURIComponent(formatLocalISO(stop))}`
+      + `&am=${SOC_AGGREGATION_MINUTES}`;
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    renderSolisSocChart(data || []);
+  } catch (error) {
+    console.error('Failed to fetch solis SOC data:', error);
+  }
+}
+
+let solisSocChartInstance = null;
+
+function renderSolisSocChart(points) {
+  if (!elements.solisSocChart || !points.length) return;
+
+  if (solisSocChartInstance) {
+    solisSocChartInstance.destroy();
+    solisSocChartInstance = null;
+  }
+
+  const labels = points.map(p => formatShortTime(p.timestamp));
+  const data = points.map(p => p.value);
+
+  const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)';
+  const textColor = isDark ? '#a0a0b0' : '#666666';
+
+  solisSocChartInstance = new Chart(elements.solisSocChart, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Battery SOC (%)',
+          data,
+          borderColor: '#8b5cf6',
+          backgroundColor: 'rgba(139, 92, 246, 0.15)',
+          borderWidth: 2,
+          pointRadius: 0,
+          fill: true,
+          tension: 0.3
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        x: {
+          ticks: { color: textColor, maxRotation: 0, font: { size: 10 }, maxTicksLimit: 6 },
+          grid: { color: gridColor }
+        },
+        y: {
+          min: 0,
+          max: 100,
+          ticks: { color: textColor, font: { size: 10 }, callback: v => v + '%' },
+          grid: { color: gridColor }
+        }
+      }
+    }
+  });
 }
