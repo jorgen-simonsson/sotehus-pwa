@@ -5,7 +5,7 @@
 import { CONFIG } from './config.js';
 import { elements, initElements } from './dom.js';
 import { startRefresh } from './dashboard.js';
-import { showDashboardView, showSolisView, showCostView, showSettingsView } from './views.js';
+import { showDashboardView, showSolisView, showWeatherView, showCostView, showSettingsView } from './views.js';
 import { toggleMenu, closeMenu } from './menu.js';
 import {
   registerServiceWorker,
@@ -25,6 +25,12 @@ function setupMenu() {
   });
 
   elements.solisBackBtn.addEventListener('click', showDashboardView);
+
+  document.getElementById('menuWeather').addEventListener('click', () => {
+    showWeatherView();
+  });
+
+  elements.weatherBackBtn.addEventListener('click', showDashboardView);
 
   document.querySelectorAll('.menu-item[data-period]').forEach(item => {
     item.addEventListener('click', () => {

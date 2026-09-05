@@ -38,9 +38,10 @@ The entire frontend lives in `src/` with no bundler or framework. JS is split in
 - **`src/js/format.js`** — timestamp/power/ISO formatting helpers.
 - **`src/js/dashboard.js`** — dashboard card fetch/render + `startRefresh`/`stopRefresh`.
 - **`src/js/solis.js`** — Solis power-flow view fetch/render + its own refresh loop.
+- **`src/js/weather.js`** — weather station view fetch/render + its own refresh loop.
 - **`src/js/cost.js`** — cost view fetch/render and the Chart.js cost chart.
 - **`src/js/settings.js`** — params fetch/render/save.
-- **`src/js/views.js`** — `showDashboardView`/`showSolisView`/`showCostView`/`showSettingsView`, coordinating which feature module's refresh loop is active.
+- **`src/js/views.js`** — `showDashboardView`/`showSolisView`/`showWeatherView`/`showCostView`/`showSettingsView`, coordinating which feature module's refresh loop is active.
 - **`src/js/menu.js`** — hamburger menu open/close.
 - **`src/js/pwa.js`** — service worker registration, install prompt, online/visibility handling.
 - **`src/js/meta.js`** — backend version + location name fetch for header/footer.
@@ -54,7 +55,7 @@ When adding a new JS module, also add it to `STATIC_ASSETS` in `src/sw.js` so it
 
 ### View system
 
-There is no router. Four views share the DOM: `dashboardView`, `costView`, `blocksView`, `settingsView`. Navigation functions (`showDashboardView`, `showCostView`, `showSettingsView`) add/remove the `hidden` class and start/stop the 1-second polling timer as appropriate.
+There is no router. Views share the DOM: `dashboardView`, `costView`, `blocksView`, `settingsView`, `solisView`, `weatherView`. Navigation functions (`showDashboardView`, `showCostView`, `showSettingsView`, `showSolisView`, `showWeatherView`) add/remove the `hidden` class and start/stop the relevant polling timer as appropriate.
 
 ### API integration
 
@@ -63,6 +64,7 @@ All API calls target `CONFIG.API_BASE_URL` (defaults to `http://sotehus-pi5:8080
 - `GET /api/energy/cost?start=...&stop=...` — cost report with price period blocks
 - `GET /api/params` / `PUT /api/params/{key}` — configurable backend parameters
 - `GET /api/version` — backend version for footer display
+- `GET /api/weather` — latest weather station readings (`readings` map of name → `{value, unitOfMeasure}`), polled every `CONFIG.WEATHER_REFRESH_INTERVAL`
 
 The cost view uses `formatLocalISO()` to send timezone-aware ISO timestamps matching Swedish local time.
 

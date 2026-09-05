@@ -43,6 +43,7 @@
       <div id="menuOverlay" class="menu-overlay hidden"></div>
       <nav id="menuDropdown" class="menu-dropdown hidden">
         <button class="menu-item" id="menuSolis">☀️ Solis</button>
+        <button class="menu-item" id="menuWeather">🌤️ Weather</button>
         <button class="menu-item" data-period="lastHour">💰 Cost last hour</button>
         <button class="menu-item" data-period="last24h">💰 Cost last 24 hours</button>
         <button class="menu-item" data-period="lastMonth">💰 Cost last calendar month</button>
@@ -201,6 +202,95 @@
 
         <div class="last-updated" id="solisUpdated"></div>
       </div><!-- /solisView -->
+
+      <!-- Weather View -->
+      <div id="weatherView" class="hidden">
+        <header class="cost-header">
+          <button id="weatherBackBtn" class="back-arrow-btn" aria-label="Back">←</button>
+          <h2>Weather</h2>
+        </header>
+
+        <div id="weatherError" class="cost-error"></div>
+
+        <div class="weather-cards">
+
+          <!-- Outdoor Temperature -->
+          <div class="card weather-card">
+            <div class="card-header">
+              <span class="card-icon">🌡️</span>
+              <span class="card-title">Outdoor Temperature</span>
+            </div>
+            <div class="card-content">
+              <div class="weather-display">
+                <span class="value" id="weatherOutdoorTemp">--</span>
+                <span class="unit" id="weatherOutdoorTempUnit">°C</span>
+              </div>
+              <div class="weather-subrow">
+                <span>Feels like <b id="weatherFeelsLike">--</b></span>
+                <span>Dew point <b id="weatherDewPoint">--</b></span>
+                <span>Humidity <b id="weatherOutdoorHumidity">--</b></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Wind -->
+          <div class="card weather-card">
+            <div class="card-header">
+              <span class="card-icon">💨</span>
+              <span class="card-title">Wind</span>
+            </div>
+            <div class="card-content">
+              <div class="weather-display">
+                <span class="value" id="weatherWindSpeed">--</span>
+                <span class="unit" id="weatherWindUnit">m/s</span>
+              </div>
+              <div class="weather-wind-direction">
+                <svg id="weatherWindArrow" class="weather-wind-arrow" viewBox="0 0 24 24" width="36" height="36" aria-hidden="true">
+                  <path d="M12 2 L18 15 L12 11.5 L6 15 Z" fill="currentColor" />
+                </svg>
+                <span id="weatherWindDirection">--</span>
+              </div>
+              <div class="weather-subrow">
+                <span>Gust <b id="weatherWindGust">--</b></span>
+                <span>10min avg <b id="weatherWindAvg">--</b></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Rain -->
+          <div class="card weather-card">
+            <div class="card-header">
+              <span class="card-icon">🌧️</span>
+              <span class="card-title">Rain</span>
+            </div>
+            <div class="card-content">
+              <div class="weather-display">
+                <span class="value" id="weatherRainRate">--</span>
+                <span class="unit" id="weatherRainUnit">mm/Hr</span>
+              </div>
+              <div class="status-indicator" id="weatherRainStatus">--</div>
+              <div class="weather-subrow">
+                <span>Today <b id="weatherRainDaily">--</b></span>
+                <span>Week <b id="weatherRainWeekly">--</b></span>
+                <span>Month <b id="weatherRainMonthly">--</b></span>
+                <span>Year <b id="weatherRainYearly">--</b></span>
+              </div>
+              <div class="weather-subrow">
+                <span>Event <b id="weatherRainEvent">--</b></span>
+                <span>Event total <b id="weatherRainEventTotal">--</b></span>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /weather-cards -->
+
+        <div class="weather-other-card">
+          <div class="weather-other-title">More readings</div>
+          <div class="weather-other-list" id="weatherOtherList"></div>
+        </div>
+
+        <div class="last-updated" id="weatherUpdated"></div>
+      </div><!-- /weatherView -->
 
       <!-- Cost View -->
       <div id="costView" class="hidden">

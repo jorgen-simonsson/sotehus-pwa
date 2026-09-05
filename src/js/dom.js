@@ -42,6 +42,7 @@ export const elements = {
   dashboardView: null,
   costView: null,
   solisView: null,
+  weatherView: null,
 
   // Menu
   menuBtn: null,
@@ -91,7 +92,33 @@ export const elements = {
   settingsError: null,
   settingsList: null,
   settingsStatus: null,
-  settingsBackBtn: null
+  settingsBackBtn: null,
+
+  // Weather view
+  weatherBackBtn: null,
+  weatherError: null,
+  weatherUpdated: null,
+  weatherOutdoorTemp: null,
+  weatherOutdoorTempUnit: null,
+  weatherFeelsLike: null,
+  weatherDewPoint: null,
+  weatherOutdoorHumidity: null,
+  weatherWindSpeed: null,
+  weatherWindUnit: null,
+  weatherWindArrow: null,
+  weatherWindDirection: null,
+  weatherWindGust: null,
+  weatherWindAvg: null,
+  weatherRainRate: null,
+  weatherRainUnit: null,
+  weatherRainStatus: null,
+  weatherRainDaily: null,
+  weatherRainWeekly: null,
+  weatherRainMonthly: null,
+  weatherRainYearly: null,
+  weatherRainEvent: null,
+  weatherRainEventTotal: null,
+  weatherOtherList: null
 };
 
 // Initialize DOM elements
@@ -133,6 +160,7 @@ export function initElements() {
   elements.dashboardView = document.getElementById('dashboardView');
   elements.costView = document.getElementById('costView');
   elements.solisView = document.getElementById('solisView');
+  elements.weatherView = document.getElementById('weatherView');
 
   // Menu
   elements.menuBtn = document.getElementById('menuBtn');
@@ -183,4 +211,30 @@ export function initElements() {
   elements.settingsList = document.getElementById('settingsList');
   elements.settingsStatus = document.getElementById('settingsStatus');
   elements.settingsBackBtn = document.getElementById('settingsBackBtn');
+
+  // Weather view
+  elements.weatherBackBtn = document.getElementById('weatherBackBtn');
+  elements.weatherError = document.getElementById('weatherError');
+  elements.weatherUpdated = document.getElementById('weatherUpdated');
+  elements.weatherOutdoorTemp = document.getElementById('weatherOutdoorTemp');
+  elements.weatherOutdoorTempUnit = document.getElementById('weatherOutdoorTempUnit');
+  elements.weatherFeelsLike = document.getElementById('weatherFeelsLike');
+  elements.weatherDewPoint = document.getElementById('weatherDewPoint');
+  elements.weatherOutdoorHumidity = document.getElementById('weatherOutdoorHumidity');
+  elements.weatherWindSpeed = document.getElementById('weatherWindSpeed');
+  elements.weatherWindUnit = document.getElementById('weatherWindUnit');
+  elements.weatherWindArrow = document.getElementById('weatherWindArrow');
+  elements.weatherWindDirection = document.getElementById('weatherWindDirection');
+  elements.weatherWindGust = document.getElementById('weatherWindGust');
+  elements.weatherWindAvg = document.getElementById('weatherWindAvg');
+  elements.weatherRainRate = document.getElementById('weatherRainRate');
+  elements.weatherRainUnit = document.getElementById('weatherRainUnit');
+  elements.weatherRainStatus = document.getElementById('weatherRainStatus');
+  elements.weatherRainDaily = document.getElementById('weatherRainDaily');
+  elements.weatherRainWeekly = document.getElementById('weatherRainWeekly');
+  elements.weatherRainMonthly = document.getElementById('weatherRainMonthly');
+  elements.weatherRainYearly = document.getElementById('weatherRainYearly');
+  elements.weatherRainEvent = document.getElementById('weatherRainEvent');
+  elements.weatherRainEventTotal = document.getElementById('weatherRainEventTotal');
+  elements.weatherOtherList = document.getElementById('weatherOtherList');
 }
