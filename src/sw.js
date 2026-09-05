@@ -15,6 +15,7 @@ const STATIC_ASSETS = [
   '/js/menu.js',
   '/js/dashboard.js',
   '/js/solis.js',
+  '/js/weather.js',
   '/js/cost.js',
   '/js/settings.js',
   '/js/views.js',
